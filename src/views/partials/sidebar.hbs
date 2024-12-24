@@ -1,1 +1,122 @@
-<h1>Sidebar</h1>
+<style>
+    .sidebar {
+        width: 100%;
+        background: #eeeeee;
+        padding: 20px;
+        height: 100vh;
+        position: relative;
+    }
+
+    .logo img {
+        height: 50px;
+        object-fit: cover;
+    }
+
+    .nav-link {
+        color: #6c757d;
+        padding: 12px 16px;
+        border-radius: 12px;
+        margin-bottom: 8px;
+    }
+
+    .nav-link.active {
+        background: #14142B;
+        color: white;
+    }
+
+    .nav-link i {
+        width: 24px;
+        margin-right: 12px;
+    }
+
+    .title {
+        font-weight: 500;
+        font-size: 20px;
+    }
+
+    .profile {
+        margin-top: auto;
+        padding: 16px;
+        display: flex;
+        align-items: center;
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+    }
+
+    .profile img {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 12px;
+    }
+
+    .profile-name {
+        color: #14142B;
+        font-weight: 500;
+    }
+
+    .menu-item:hover {
+        background: #fafafa;
+        color: #14142B;
+        border-radius: 12px;
+        transition: 0.6s;
+    }
+
+</style>
+
+<div class="sidebar">
+
+    <div class="logo text-center">
+        <img src="/images/logo.png" alt="TVV_Store">
+    </div>
+
+    <hr>
+
+    <nav class="menu flex-column">
+        <div class="menu-item">
+            <a href="/dashboard" class="nav-link d-flex align-items-center">
+                <i class="fa-solid fa-house"></i>
+                <span class="m-2 title">Dashboard</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="/products" class="nav-link d-flex align-items-center">
+                <i class="fa-solid fa-layer-group"></i>
+                <span class="m-2 title">Products</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="/orders" class="nav-link d-flex align-items-center">
+                <i class="fa-solid fa-truck-fast"></i>
+                <span class="m-2 title">Oders</span>
+            </a>
+        </div>
+        <div class="menu-item">
+            <a href="/customers" class="nav-link d-flex align-items-center">
+                <i class="fa-solid fa-users-line"></i>
+                <span class="m-2 title">Customers</span>
+            </a>
+        </div>
+    </nav>
+
+    <div class="profile">
+        <img src="https://res.cloudinary.com/duf2t1pkp/image/upload/v1734160942/wnjq1p5rtgax4uxjm6v3.jpg" alt="Profile">
+        <span class="profile-name">Vũ Thế Vỹ</span>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPath) {
+                link.classList.add('active');
+            } else {
+                link.classList.remove('active');
+            }
+        });
+    });
+
+</script>
