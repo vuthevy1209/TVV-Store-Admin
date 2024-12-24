@@ -6,6 +6,7 @@ const logger = require('morgan');
 const {connect} = require("./config/database/index.js");
 const hbsHelpers = require('handlebars-helpers');
 const { engine } = require('express-handlebars');
+const router = require('./routes/index');
 
 const app = express();
 
@@ -31,6 +32,9 @@ const hbs = engine({
     runtimeOptions: {
         allowProtoPropertiesByDefault: true,
         allowProtoMethodsByDefault: true,
+    },
+    onPartialNotFound: function (name) {
+        console.error(`Partial not found: ${name}`);
     }
 });
 
@@ -45,8 +49,7 @@ app.use(cookieParser()); // parse các cookie gửi lên server
 app.use(express.static(path.join(__dirname, 'public'))); // có tác dụng serve các file tĩnh như css, js, images
 
 
-
-
+router(app);
 
 
 // catch 404 and forward to error handler
@@ -62,7 +65,7 @@ app.use(function (err, req, res, next) {
 
     // render the error page
     res.status(err.status || 500);
-    res.render('error');
+    res.render('page/error/error');
 });
 
 module.exports = app;
