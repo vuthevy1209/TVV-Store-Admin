@@ -1,74 +1,12 @@
-<style>
-    .sidebar {
-        width: 100%;
-        background: #eeeeee;
-        padding: 20px;
-        height: 100vh;
-        position: relative;
-    }
-
-    .logo img {
-        height: 50px;
-        object-fit: cover;
-    }
-
-    .nav-link {
-        color: #6c757d;
-        padding: 12px 16px;
-        border-radius: 12px;
-        margin-bottom: 8px;
-    }
-
-    .nav-link.active {
-        background: #14142B;
-        color: white;
-    }
-
-    .nav-link i {
-        width: 24px;
-        margin-right: 12px;
-    }
-
-    .title {
-        font-weight: 500;
-        font-size: 20px;
-    }
-
-    .profile {
-        margin-top: auto;
-        padding: 16px;
-        display: flex;
-        align-items: center;
-        position: absolute;
-        bottom: 0;
-        width: 100%;
-    }
-
-    .profile img {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        margin-right: 12px;
-    }
-
-    .profile-name {
-        color: #14142B;
-        font-weight: 500;
-    }
-
-    .menu-item:hover {
-        background: #fafafa;
-        color: #14142B;
-        border-radius: 12px;
-        transition: 0.6s;
-    }
-
-</style>
+<link rel="stylesheet" href="/css/sidebar.css">
 
 <div class="sidebar">
 
-    <div class="logo text-center">
+    <div class="logo d-flex justify-content-center align-items-center" id="logo">
         <img src="/images/logo.png" alt="TVV_Store">
+        <span style="font-size: 1.5rem; font-weight: bold; color: #333; margin-left: 25px">
+            <i class="fa-solid fa-bars"></i>
+        </span>
     </div>
 
     <hr>
@@ -99,11 +37,6 @@
             </a>
         </div>
     </nav>
-
-    <div class="profile">
-        <img src="https://res.cloudinary.com/duf2t1pkp/image/upload/v1734160942/wnjq1p5rtgax4uxjm6v3.jpg" alt="Profile">
-        <span class="profile-name">Vũ Thế Vỹ</span>
-    </div>
 </div>
 
 <script>
@@ -117,6 +50,10 @@
                 link.classList.remove('active');
             }
         });
+    });
+
+    document.getElementById("logo").addEventListener("click", function() {
+        window.location.href = "/dashboard";
     });
 
 </script>

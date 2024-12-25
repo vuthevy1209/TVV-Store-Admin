@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>{{title}}</title>
+    <title>TVV Store Admin</title>
+    <link rel="shortcut icon" href="/images/favicon.png" type="">
     <link rel="stylesheet" href="/css/style.css">
     <link rel="stylesheet" href="/css/bootstrap.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <body>
     <div class="row">
-        <div class="col-3">
+        <div class="col-2">
             {{> sidebar}}
         </div>
-        <div class="col-9">
-            {{{body}}}
+        <div class="col-10">
+            <div class="row">
+                <div class="col-12">
+                    {{> header}}
+                </div>
+                <div class="col-12" style="margin-top: 70px">
+                    {{{body}}}
+                </div>
+            </div>
         </div>
     </div>
 </body>
