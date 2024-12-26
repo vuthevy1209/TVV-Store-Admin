@@ -42,13 +42,9 @@ class ProductService {
         const pagination = {
             currentPage: page,
             totalPages,
-            hasPrev: page > 1,
-            hasNext: page < totalPages,
-            prevPage: page - 1,
-            nextPage: page + 1,
             pages: Array.from({length: totalPages}, (_, i) => ({
                 number: i + 1,
-                active: i + 1 === page
+                active: page === i + 1,
             }))
         };
 

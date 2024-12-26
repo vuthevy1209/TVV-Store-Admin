@@ -89,21 +89,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!paginationElement) return;
 
         paginationElement.innerHTML = `
-            <li class="page-item ${!pagination.hasPrev ? 'disabled' : ''}">
-                <button class="page-link" data-page="${pagination.prevPage}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </button>
-            </li>
             ${pagination.pages.map(page => `
                 <li class="page-item ${page.active ? 'active' : ''}">
                     <button class="page-link" data-page="${page.number}">${page.number}</button>
                 </li>
             `).join('')}
-            <li class="page-item ${!pagination.hasNext ? 'disabled' : ''}">
-                <button class="page-link" data-page="${pagination.nextPage}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </button>
-            </li>
         `;
     }
 });

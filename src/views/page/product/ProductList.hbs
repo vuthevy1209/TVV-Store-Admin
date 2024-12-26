@@ -114,23 +114,13 @@
         </div>
     </div>
 
-    <nav aria-label="Page navigation example" class="d-flex justify-content-center">
+    <nav class="d-flex justify-content-center">
         <ul class="pagination">
-            <li class="page-item {{#if pagination.hasPrev}}disabled{{/if}}">
-                <button class="page-link" data-page="{{pagination.prevPage}}" aria-label="Previous">
-                    <span aria-hidden="true">&laquo;</span>
-                </button>
-            </li>
             {{#each pagination.pages}}
                 <li class="page-item {{#if this.active}}active{{/if}}">
                     <button class="page-link" data-page="{{this.number}}">{{this.number}}</button>
                 </li>
             {{/each}}
-            <li class="page-item {{#if pagination.hasNext}}disabled{{/if}}">
-                <button class="page-link" data-page="{{pagination.nextPage}}" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                </button>
-            </li>
         </ul>
     </nav>
 </div>

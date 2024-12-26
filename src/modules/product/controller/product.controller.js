@@ -6,8 +6,15 @@ class ProductController{
     // [GET] /products
     async index(req, res, next) {
         try {
-            const {page = 1, limit = 10 } = req.query;
+            let {page = 1, limit = 3 } = req.query;
+            if (typeof page !== 'number' || typeof limit !== 'number') {
+                page = parseInt(page);
+                limit = parseInt(limit);
+            }
+
             const { productList, pagination } = await productService.getProductsWithPagination({ page, limit });
+
+            console.log('pagination:', pagination);
 
             // fetch by AJAX
             if (req.headers.accept.includes('application/json')) {
