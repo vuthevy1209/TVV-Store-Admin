@@ -6,7 +6,7 @@ class ProductController{
     // [GET] /products
     async index(req, res, next) {
         try {
-            const {page = 1, limit = 3 } = req.query;
+            const {page = 1, limit = 10 } = req.query;
             const { productList, pagination } = await productService.getProductsWithPagination({ page, limit });
 
             // fetch by AJAX
@@ -23,6 +23,13 @@ class ProductController{
             console.error('Error searching products:', error);
             next(error);
         }
+    }
+
+    // [GET] /products/create
+    async create(req, res) {
+        const brandList = await brandService.getAll();
+        const categoryList = await categoryService.getAll();
+        res.render('page/product/AddProduct', { brandList, categoryList });
     }
 }
 

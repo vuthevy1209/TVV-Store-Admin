@@ -25,21 +25,6 @@ class ProductService {
         });
     }
 
-    // Get 4 related products (excluding the current product)
-    async getRelatedProducts(productId, brand) {
-        return await Product.findAll({
-            where: {
-                id: {[Op.ne]: productId},  // Exclude the current product
-                brand_id: brand
-            },
-            limit: 4,
-            include: [
-                {model: Category, attributes: ['name']},
-                {model: Brand, attributes: ['name']}
-            ]
-        });
-    }
-
     // Get all products with pagination
     async getProductsWithPagination({page = 1, limit = 3}) {
         const offset = (page - 1) * limit;
@@ -68,94 +53,6 @@ class ProductService {
         };
 
         return {productList, pagination};
-    }
-
-
-    // Search for products with filters and pagination
-    async search({
-                     nameOrDescription,
-                     brand,
-                     category,
-                     priceMin,
-                     priceMax,
-                     inventoryQuantityMin,
-                     inventoryQuantityMax,
-                     page = 1,
-                     limit = 3,
-                     sort
-                 })
-    {
-        const query = {};
-
-        // Convert string type of numeric fields to numeric values
-        if (priceMin) priceMin = parseFloat(priceMin);
-        if (priceMax) priceMax = parseFloat(priceMax);
-        if (inventoryQuantityMin) inventoryQuantityMin = parseInt(inventoryQuantityMin, 10);
-        if (inventoryQuantityMax) inventoryQuantityMax = parseInt(inventoryQuantityMax, 10);
-        if (page) page = parseInt(page, 10);
-        if (limit) limit = parseInt(limit, 10);
-
-        let productIds = [];
-        if (nameOrDescription) {
-            // Use FlexSearch to search for products by name or description
-            const flexSearchResults = index.search(nameOrDescription);
-            productIds = flexSearchResults.map(result => result.result).flat();
-            query.id = {[Op.in]: productIds};
-        }
-
-        if (brand) query.brand_id = brand;
-        if (category) query.category_id = category;
-        if (priceMin) query.price = {[Op.gte]: priceMin};
-        if (priceMax) query.price = {...query.price, [Op.lte]: priceMax};
-        if (inventoryQuantityMin) query.inventory_quantity = {[Op.gte]: inventoryQuantityMin};
-        if (inventoryQuantityMax) query.inventory_quantity = {
-            ...query.inventory_quantity,
-            [Op.lte]: inventoryQuantityMax
-        };
-
-        const offset = (page - 1) * limit;
-
-        // Determine the sorting order
-        let order = [];
-        if (sort === 'priceAsc') {
-            order.push(['price', 'ASC']);
-        } else if (sort === 'priceDesc') {
-            order.push(['price', 'DESC']);
-        }
-
-        const {rows: products, count: totalProducts} = await Product.findAndCountAll({
-            where: query,
-            include: [
-                {model: Category, attributes: ['name']},
-                {model: Brand, attributes: ['name']}
-            ],
-            offset,
-            limit,
-            order
-        });
-
-        const productList = products.map(product => product.get({plain: true}));
-        const brands = await Brand.findAll();
-        const BrandList = brands.map(brand => brand.get({plain: true}));
-        const categories = await Category.findAll();
-        const CategoryList = categories.map(category => category.get({plain: true}));
-
-        const totalPages = Math.ceil(totalProducts / limit);
-
-        const pagination = {
-            currentPage: page,
-            totalPages,
-            hasPrev: page > 1,
-            hasNext: page < totalPages,
-            prevPage: page - 1,
-            nextPage: page + 1,
-            pages: Array.from({length: totalPages}, (_, i) => ({
-                number: i + 1,
-                active: i + 1 === page
-            }))
-        };
-
-        return {productList, BrandList, CategoryList, pagination};
     }
 }
 
