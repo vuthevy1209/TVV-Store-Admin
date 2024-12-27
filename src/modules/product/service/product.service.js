@@ -50,6 +50,11 @@ class ProductService {
 
         return {productList, pagination};
     }
+
+    // Create a new product
+    async create(product) {
+        return Product.create(product);
+    }
 }
 
 module.exports = new ProductService();

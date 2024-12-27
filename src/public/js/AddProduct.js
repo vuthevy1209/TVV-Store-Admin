@@ -1,5 +1,7 @@
+
+
+
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('productForm');
     const mainPreview = document.querySelector('.main-image-preview');
     const thumbnailStrip = document.querySelector('.thumbnail-strip');
     const fileInput = document.querySelector('.hidden-file-input');
@@ -81,11 +83,84 @@ document.addEventListener('DOMContentLoaded', function() {
         thumbnailStrip.insertBefore(thumbnail, thumbnailStrip.lastElementChild);
     }
 
-    // Form submission
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
+    const form = document.getElementById("productForm");
+
+    form.addEventListener("submit", async (e) => {
+        e.preventDefault(); // Ngăn hành vi mặc định của form
+
         const formData = new FormData(form);
-        // Add your form submission logic here
-        console.log('Form submitted');
+
+        const body = {};
+
+        for (let [key, value] of formData.entries()) {
+            if (key !== 'image_urls') {
+                body[key] = value;
+            }
+        }
+
+
+        const uploadFile = async (image) => {
+            try {
+                const response = await fetch("/cloudinary/upload", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ data: image }),
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    return result.url;
+                } else {
+                    console.error("Upload failed", response.status, await response.text());
+                    return null;
+                }
+            } catch (error) {
+                console.error("Error uploading file", error);
+                return null;
+            }
+        };
+
+        const imageList = Array.from(document.querySelectorAll('.thumbnail-wrapper img')).map(img => img.src);
+
+        body.image_urls = [];
+        for (let image of imageList) {
+            try {
+                const url = await uploadFile(image);
+                if (url) {
+                    body.image_urls.push(url);
+                }
+            } catch (error) {
+                console.error("Error uploading image", error);
+            }
+        }
+
+
+        console.log(body);
+        try {
+            const response = await fetch("/products/store", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    product: body,
+                }),
+            });
+
+            if (response.ok) {
+                const result = await response.json();
+                alert("Product added successfully!");
+                console.log(result);
+                form.reset();
+            } else {
+                const error = await response.json();
+                alert("Error adding product: " + error.message);
+            }
+        } catch (err) {
+            console.error("Error:", err);
+            alert("An unexpected error occurred!");
+        }
     });
 });

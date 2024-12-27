@@ -38,6 +38,21 @@ class ProductController{
         const categoryList = await categoryService.getAll();
         res.render('page/product/AddProduct', { brandList, categoryList });
     }
+
+    // [POST] /products/store
+    async store(req, res, next) {
+        try {
+            const product = req.body;
+
+            console.log('product:', product);
+            // const response = await productService.create(product);
+            //
+            // res.json({ message: 'Product created successfully', product: response });
+        } catch (error) {
+            console.error('Error creating product:', error);
+            next(error);
+        }
+    }
 }
 
 module.exports = new ProductController();
