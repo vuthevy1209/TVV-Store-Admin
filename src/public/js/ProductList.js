@@ -1,4 +1,3 @@
-// ProductList.js
 document.addEventListener('DOMContentLoaded', function() {
     // Handle pagination clicks
     const paginationContainer = document.querySelector('.pagination');
@@ -68,18 +67,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>${product.inventory_quantity}</td>
                 <td>
                     <div class="d-flex align-items-center justify-content-center list-action">
-                        <a class="badge badge-info mr-2" data-toggle="tooltip" data-placement="top" title="View" href="#">
+                        <div class="button button-view mr-2">
                             <i class="fa-solid fa-eye"></i>
-                        </a>
-                        <a class="badge bg-success mr-2" data-toggle="tooltip" data-placement="top" title="Edit" href="#">
+                        </div>
+                        <a class="button button-edit mr-2" href="/products/edit/${product.id}" style="text-decoration: none;">
                             <i class="fa-solid fa-pen"></i>
                         </a>
-                        <a class="badge bg-warning mr-2" data-toggle="tooltip" data-placement="top" title="Delete" href="#">
+                        <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
                             <i class="fa-solid fa-x"></i>
-                        </a>
+                        </button>
                     </div>
                 </td>
             </tr>
+            
+            <!-- Modal -->
+            <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Are you sure you want to delete this product?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                Close
+                            </button>
+                            <button type="button" class="btn btn-dark button-delete-modal" data-id="${product.id}">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         `).join('');
     }
 
@@ -96,4 +118,35 @@ document.addEventListener('DOMContentLoaded', function() {
             `).join('')}
         `;
     }
+
+
+    // Lắng nghe sự kiện click trên tất cả nút Delete
+    document.querySelectorAll('.button-delete-modal').forEach(button => {
+        button.addEventListener('click', function () {
+            // Lấy id của sản phẩm từ data-id
+            const productId = this.getAttribute('data-id');
+
+            // Gửi yêu cầu DELETE tới server
+            fetch(`/products/${productId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('Product deleted successfully!');
+                        // Reload lại trang để cập nhật danh sách
+                        location.reload();
+                    } else {
+                        alert('Failed to delete product.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+    });
+
+
 });

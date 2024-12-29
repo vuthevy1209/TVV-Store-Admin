@@ -55,6 +55,20 @@ class ProductService {
     async create(product) {
         return Product.create(product);
     }
+
+    // Update a product
+    async update(id, product) {
+        return Product.update(product, {
+            where: {id}
+        });
+    }
+
+    // delete a product
+    async delete(id) {
+        return Product.destroy({
+            where: {id}
+        });
+    }
 }
 
 module.exports = new ProductService();

@@ -1,16 +1,15 @@
-
 document.addEventListener('DOMContentLoaded', function() {
     const mainPreview = document.querySelector('.main-image-preview');
     const thumbnailStrip = document.querySelector('.thumbnail-strip');
     const fileInput = document.querySelector('.hidden-file-input');
 
     // Handle file selection
-    fileInput.addEventListener('change', function(e) {
+    fileInput.addEventListener('change', function (e) {
         const files = Array.from(e.target.files);
         files.forEach(file => {
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
-                reader.onload = function(e) {
+                reader.onload = function (e) {
                     const imageId = Date.now().toString();
                     addThumbnail(e.target.result, imageId);
                     if (!mainPreview.querySelector('img')) {
@@ -23,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Handle thumbnail clicks
-    thumbnailStrip.addEventListener('click', function(e) {
+    thumbnailStrip.addEventListener('click', function (e) {
         const thumbnail = e.target.closest('.thumbnail-wrapper');
         if (thumbnail) {
             const img = thumbnail.querySelector('img');
@@ -37,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Handle image removal
-    thumbnailStrip.addEventListener('click', function(e) {
+    thumbnailStrip.addEventListener('click', function (e) {
         const removeBtn = e.target.closest('.remove-image');
         if (removeBtn) {
             e.stopPropagation();
@@ -81,7 +80,7 @@ document.addEventListener('DOMContentLoaded', function() {
         thumbnailStrip.insertBefore(thumbnail, thumbnailStrip.lastElementChild);
     }
 
-    const form = document.getElementById("productForm");
+    const form = document.getElementById("productFormEdit");
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault(); // Ngăn hành vi mặc định của form
@@ -89,6 +88,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const formData = new FormData(form);
 
         const body = {};
+
+        body['id'] = form.getAttribute('data-id');
 
         for (let [key, value] of formData.entries()) {
             if (key !== 'image_urls') {
@@ -104,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ data: image }),
+                    body: JSON.stringify({data: image}),
                 });
 
                 if (response.ok) {
@@ -137,8 +138,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
         console.log(body);
         try {
-            const response = await fetch("/products/store", {
-                method: 'POST',
+            const response = await fetch("/products/update", {
+                method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -149,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (response.ok) {
                 const result = await response.json();
-                alert("Product added successfully!");
+                alert("Product updated successfully!");
                 console.log(result);
                 form.reset();
             } else {
@@ -161,4 +162,5 @@ document.addEventListener('DOMContentLoaded', function() {
             alert("An unexpected error occurred!");
         }
     });
+
 });
