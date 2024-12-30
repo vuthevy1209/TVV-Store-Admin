@@ -1,21 +1,26 @@
 const { sequelize } = require('../../../config/database');
-const { Op } = require('sequelize');
+const { Op, or } = require('sequelize');
 
 const Order = require('../model/order');
 const OrderItems = require('../model/orderItems');
+const Product = require('../../product/models/product');
 
 const Customer = require('../../customer/model/customer');
 const customerServices = require('../../customer/service/customer.service');
 const paymentService = require('../../payment/service/payment.service');
 
 
-const { default: Decimal } = require('decimal.js');
+const DecimalUtil = require('../../../utils/decimal.utils');
 
 const PaymentTypeEnum = require('../../payment/enum/payment.enum');
 const { OrderStatusEnum } = require('../enum/order.enum');
 
 const userServices = require('../../user/service/user.service');
 const User = require('../../user/model/user');
+
+const shippingService = require('../../shipping/service/shipping.service');
+
+const productService = require('../../product/service/product.service');
 
 
 const moment = require('moment');
@@ -31,7 +36,7 @@ class OrderService {
         } return orderStatusList;
     }
 
-    async findOrdersWithPaginationAndCriteria(page=1, limit=5, searchParams) {
+    async findOrdersWithPaginationAndCriteria(page = 1, limit = 5, searchParams) {
         page = parseInt(page); // because req.query.page is always a string --> number === page is always false
         limit = parseInt(limit);
         const offset = (page - 1) * limit;
@@ -49,18 +54,18 @@ class OrderService {
         if (searchParams.startDate) {
             where.created_at[Op.gte] = searchParams.startDate;
         }
-        
+
         if (searchParams.endDate) {
             where.created_at[Op.lte] = searchParams.endDate;
         }
-        
+
 
         if (searchParams.orderId) {
             where.id = searchParams.orderId;
         }
 
-        const order =[ ['created_at', 'DESC']];
-        if(searchParams.sort){
+        const order = [['created_at', 'DESC']];
+        if (searchParams.sort) {
             order[0][1] = searchParams.sort;
         }
 
@@ -90,7 +95,7 @@ class OrderService {
             const paymentDetails = await paymentService.getPaymentDetailsByOrderId(order.id);
             order.dataValues.paymentDetails = paymentDetails ? paymentDetails.get({ plain: true }) : null;
             order.dataValues.customer.dataValues.username = user.username;
-            
+
         }));
 
 
@@ -105,49 +110,118 @@ class OrderService {
             pagination: {
                 currentPage: page,
                 totalPages: totalPages,
-                pages: Array.from({length: totalPages}, (v,k) => k+1).map(number => ({
+                pages: Array.from({ length: totalPages }, (v, k) => k + 1).map(number => ({
                     number,
                     active: number === page
                 }))
             }
-        
+
         }
     }
 
-    // async fetchOrderById(orderId) {
-    //     // Fetch the complete order information with associations
-    //     const completeOrder = await Order.findOne({
-    //         where: { id: orderId },
-    //         include: [
-    //             {
-    //                 model: Customer,
-    //                 as: 'customer'
-    //             }
-    //         ]
-    //     });
+    async fetchOrderById(orderId) {
+        // Fetch the complete order information with associations
+        const completeOrder = await Order.findOne({
+            where: { id: orderId },
+            include: [
+                {
+                    model: Customer,
+                    as: 'customer',
+                    include: [
+                        {
+                            model: User,
+                            as: 'user',
+                            attributes: ['username', 'email'], // Fetch additional attributes
+                        }
+                    ]
+                }
+            ]
+        });
 
-    //     if(!completeOrder) {
-    //         throw new Error('Order not found');
-    //     }
+        if (!completeOrder) {
+            throw new Error('Order not found');
+        }
 
-    //     // Fetch the order items
-    //     const orderItems = await OrderItem.findAll({
-    //         where: { order_id: orderId },
-    //         include: [
-    //             {
-    //                 model: Product,
-    //                 as: 'product'
-    //             }
-    //         ]
-    //     });
+        // Fetch the order items
+        const orderItems = await OrderItems.findAll({
+            where: { order_id: orderId },
+            include: [
+                {
+                    model: Product,
+                    as: 'product',
+                    attributes: ['name', 'image_urls'], // Fetch only the required attributes
+                }
+            ]
+        });
 
-    //     // Convert order items to plain objects
-    //     completeOrder.dataValues.orderItems = orderItems.map(item => item.get({ plain: true }));
-    //     const paymentDetails = await paymentService.getPaymentDetailsByOrderId(orderId);
-    //     completeOrder.dataValues.paymentDetails = paymentDetails ? paymentDetails.get({ plain: true }) : null;
+        // Convert order items to plain objects
+        completeOrder.dataValues.orderItems = orderItems.map(item => {
+            const plainItem = item.get({ plain: true });
+            plainItem.subtotal = DecimalUtil.multiply(plainItem.product_price, plainItem.quantity);
+            return plainItem;
+        });
 
-    //     return completeOrder.get({ plain: true });
-    // }
+        const paymentDetails = await paymentService.getPaymentDetailsByOrderId(orderId);
+        const shippingDetails = await shippingService.getShippingDetailsByOrderId(orderId);
+        completeOrder.dataValues.paymentDetails = paymentDetails ? paymentDetails.get({ plain: true }) : null;
+        completeOrder.dataValues.shippingDetails = shippingDetails ? shippingDetails.get({ plain: true }) : null;
+        if (shippingDetails) {
+            completeOrder.dataValues.shippingDetails.fullAddress = `${shippingDetails.address}, ${shippingDetails.district}, ${shippingDetails.province}`;
+        }
+        else {
+            completeOrder.dataValues.shippingDetails = 'Unknow';
+        }
+        completeOrder.dataValues.statusName = OrderStatusEnum.properties[completeOrder.status].name;
+        completeOrder.dataValues.created_at = moment(completeOrder.created_at).format('YYYY-MM-DD HH:mm:ss');
+        return completeOrder.get({ plain: true });
+    }
+
+    // pending --> confirm
+    // confirm --> paid
+    // confirm, paid --> complete
+    // pending, confirm, paid --> cancel
+
+    // to be simple --> confirm / paid --> complete / cancel
+    async updateOrderStatus(orderId, orderStatus) {
+        const order = await Order.findByPk(orderId);
+            if (!order) {
+                throw new Error('Order not found');
+            }
+            const oldStatus = order.status;
+    
+        try{
+            
+            return sequelize.transaction(async (transaction) => {
+    
+                order.status = orderStatus;
+                await order.save({ transaction });
+    
+                // 1: update to complete
+                if (orderStatus === OrderStatusEnum.COMPLETED.value) {
+                    if (oldStatus === OrderStatusEnum.CONFIRMED.value) { // COD (paid is no need because it was paid before)
+                        await paymentService.updatePaymentStatus(orderId, orderStatus, { transaction });
+                    }
+                }
+    
+                // 2: update to cancel
+                if (orderStatus === OrderStatusEnum.CANCELLED.value) { // both COD and online payment need to update status to cancel
+                    await paymentService.updatePaymentStatus(orderId, orderStatus, { transaction });
+                    // return quantity to inventory
+                    const orderItems = await OrderItems.findAll({
+                        where: { order_id: orderId }
+                    });
+                    await Promise.all(orderItems.map(async (orderItem) => {
+                        await productService.updateProductInventory(orderItem.product_id, -orderItem.quantity, { transaction });
+                    }));
+                }
+    
+                return OrderStatusEnum.properties[orderStatus].name;
+            });
+        }
+        catch(err){
+            throw new Error(`Error updating order status`);
+        }
+    }
 
 }
 

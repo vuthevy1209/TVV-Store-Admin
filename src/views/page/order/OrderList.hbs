@@ -21,10 +21,10 @@
                                     <!-- user name-->
                                     <input type="text" class="form-control m-2" name="customerName"
                                         placeholder="Customer name" value="{{customerName}}" />
-                                    <div class="input-group">
-                                        <input type="text" class="form-control m-2" name="orderId"
+                                    <div class="input-group m-2">
+                                        <input type="text" class="form-control" name="orderId"
                                             placeholder="Search order by id" value="{{orderId}}" />
-                                        <div class="input-group-append m-2">
+                                        <div class="input-group-append">
                                             <button class="btn btn-dark" type="submit">
                                                 <i class="fa-solid fa-search"></i>
                                             </button>
@@ -122,7 +122,11 @@
                             <td>
                                 <div class="d-flex align-items-center justify-content-center list-action">
                                     <div class="button button-view mr-2">
-                                        <i class="fa-solid fa-eye" href="/orders/{{this.id}}"></i>
+                                        <a class="button button-view mr-2" href="/orders/{{this.id}}"
+                                            style="text-decoration: none;">
+                                            <i class="fa-solid fa-eye" href="/orders/{{this.id}}"></i>
+                                        </a>
+
                                     </div>
                                     <a class="button button-edit mr-2" href="/orders/edit/{{this.id}}"
                                         style="text-decoration: none;">

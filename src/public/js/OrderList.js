@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const orderStatus = urlParams.get('orderStatus');
     const categorySelect = document.getElementById('category-select');
@@ -101,9 +101,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>$${order.total_price}</td>
                     <td>
                         <div class="d-flex align-items-center justify-content-center list-action">
+                            
                             <div class="button button-view mr-2">
-                                <i class="fa-solid fa-eye" href="/orders/${order.id}"></i>
-                            </div>
+                                        <a class="button button-view mr-2" href="/orders/${order.id}"
+                                            style="text-decoration: none;">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+
+                                    </div>
                             <a class="button button-edit mr-2" href="/orders/edit/${order.id}" style="text-decoration: none;">
                                 <i class="fa-solid fa-pen"></i>
                             </a>
