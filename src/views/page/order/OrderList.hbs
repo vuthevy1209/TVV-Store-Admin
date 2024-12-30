@@ -1,1 +1,146 @@
-<h1>OrderList</h1>
+<link rel="stylesheet" href="/css/OrderList.css">
+<script src="/js/OrderList.js"></script>
+
+<div class="container p-4">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="d-flex flex-wrap flex-wrap align-items-center justify-content-between mb-4 row">
+                <div class="col-10">
+                    <div class="row">
+                        <div class="col-8">
+                            <div class="d-flex">
+                                <select class="form-select m-2" id="category-select">
+                                    {{#each orderStatusList}}
+                                        <option value="{{this.id}}">{{this.name}}</option>
+                                    {{/each}}
+                                </select>
+                                <!-- user name-->
+                                <input type="text" class="form-control m-2" placeholder="Customer name"/>
+                                <!-- order created date-->
+                                <input type="date" class="form-control m-2" placeholder="Order creation time"/>
+                            </div>
+
+                        </div>
+                        <div class="search col-4">
+                            <form action="#" method="get" class="m-2">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search order by id"/>
+                                    <div class="input-group-append">
+                                        <button class="btn btn-dark" type="submit">
+                                            <i class="fa-solid fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2 d-flex justify-content-end">
+                    <a href="/orders/create" class="btn btn-dark add-list">
+                        <i class="fa-solid fa-plus"></i>
+                        Add Order
+                    </a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-12">
+            <div class="table-responsive rounded mb-3">
+                <table class="data-tables table mb-0 tbl-server-info">
+                    <thead class="text-uppercase text-center">
+                        <tr>
+                            <th></th>
+                            <th>Order Id</th>
+                            <th>Customer name</th>
+                            <th>Creation time</th>
+                            <th>Order status</th>
+                            <th>Payment status</th>
+                            <th>Total</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {{#each orders}}
+                        <tr class="text-center">
+                            <td>
+                                <div class="checkbox d-inline-block">
+                                    <input type="checkbox" class="checkbox-input" id="checkbox2">
+                                    <label for="checkbox2" class="mb-0"></label>
+                                </div>
+                            </td>
+                            <td>
+                                {{this.id}}
+                            </td>
+                            <td>{{this.customer.username}}</td>
+                            <td class="text-uppercase">
+                                <span class="product-brand">{{this.created_at}}</span>
+                            </td>
+                            <td class="text-uppercase">
+                                <span class="product-brand">{{this.statusName}}</span>
+                            </td>
+                            <td class="text-uppercase">
+                                {{#if (eq this.status 2)}}
+                                <span class="order-status-paid">{{this.paymentDetails.status}}</span>
+                                {{else}}
+                                <span class="order-status-pending">Pending</span>
+                                {{/if}}
+                            </td>
+                            <td>${{this.total_price}}</td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center list-action">
+                                    <div class="button button-view mr-2">
+                                        <i class="fa-solid fa-eye" href="/orders/{{this.id}}"></i>
+                                    </div>
+                                    <a class="button button-edit mr-2" href="/orders/edit/{{this.id}}" style="text-decoration: none;">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                        <i class="fa-solid fa-x"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+
+
+                        <!-- Modal -->
+                        <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to delete this order?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Close
+                                        </button>
+                                        <button type="button" class="btn btn-dark button-delete-modal" data-id="{{this.id}}">
+                                            Delete
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    {{/each}}
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <nav class="d-flex justify-content-center">
+        <ul class="pagination">
+            {{#each pagination.pages}}
+                <li class="page-item {{#if this.active}}active{{/if}}">
+                    <button class="page-link" data-page="{{this.number}}">{{this.number}}</button>
+                </li>
+            {{/each}}
+        </ul>
+    </nav>
+    <script src="/js/OrderList.js"></script>
+</div>
+
