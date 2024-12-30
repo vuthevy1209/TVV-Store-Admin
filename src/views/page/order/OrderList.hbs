@@ -5,38 +5,61 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="d-flex flex-wrap flex-wrap align-items-center justify-content-between mb-4 row">
-                <div class="col-10">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="d-flex">
-                                <select class="form-select m-2" id="category-select">
-                                    {{#each orderStatusList}}
-                                        <option value="{{this.id}}">{{this.name}}</option>
-                                    {{/each}}
-                                </select>
-                                <!-- user name-->
-                                <input type="text" class="form-control m-2" placeholder="Customer name"/>
-                                <!-- order created date-->
-                                <input type="date" class="form-control m-2" placeholder="Order creation time"/>
-                            </div>
+                <div class="col-12">
 
-                        </div>
-                        <div class="search col-4">
-                            <form action="#" method="get" class="m-2">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search order by id"/>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-dark" type="submit">
-                                            <i class="fa-solid fa-search"></i>
-                                        </button>
+                    <form>
+                        <div class="row">
+                            <div class="col-10">
+                                <div class="d-flex">
+                                    <select class="form-select m-2" id="category-select" name="orderStatus">
+                                        <option value="">Choose order status</option>
+                                        {{#each orderStatusList}}
+                                        <option value="{{this.value}}" id="statusSelection">{{this.name}}</option>
+                                        {{/each}}
+                                    </select>
+
+                                    <!-- user name-->
+                                    <input type="text" class="form-control m-2" name="customerName"
+                                        placeholder="Customer name" value="{{customerName}}" />
+                                    <div class="input-group">
+                                        <input type="text" class="form-control m-2" name="orderId"
+                                            placeholder="Search order by id" value="{{orderId}}" />
+                                        <div class="input-group-append m-2">
+                                            <button class="btn btn-dark" type="submit">
+                                                <i class="fa-solid fa-search"></i>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
-                            </form>
+                                <div class="d-flex">
+                                    <div class="m-2 d-flex col-4">
+                                        <label for="startDate">Start date</label>
+                                        <input type="date" class="form-control" name="startDate" id="startDate"
+                                            value="{{startDate}}" />
+                                    </div>
+                                    <div class="m-2 d-flex col-4">
+                                        <label for="endDate">End date</label>
+                                        <input type="date" class="form-control" name="endDate" id="endDate"
+                                            value="{{endDate}}" />
+                                    </div>
+                                    <div class="m-2 d-flex col-4">
+                                        <label for="sort">Sort by creation time</label>
+                                        <select class="form-select" name="sort" id="sort-select">
+                                            <option value="DESC">Descending - Default</option>
+                                            <option value="ASC">Ascending</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
+                    </form>
+
                 </div>
-                <div class="col-2 d-flex justify-content-end">
-                    <a href="/orders/create" class="btn btn-dark add-list">
+
+            </div>
+            <div class="row">
+                <div class="col-12 d-flex justify-content-end">
+                    <a href="/orders/create" class="col-2 btn btn-dark add-list">
                         <i class="fa-solid fa-plus"></i>
                         Add Order
                     </a>
@@ -61,7 +84,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {{#each orders}}
+                        {{#each orders}}
                         <tr class="text-center">
                             <td>
                                 <div class="checkbox d-inline-block">
@@ -74,11 +97,20 @@
                             </td>
                             <td>{{this.customer.username}}</td>
                             <td class="text-uppercase">
-                                <span class="product-brand">{{this.created_at}}</span>
+                                <span>{{this.created_at}}</span>
                             </td>
                             <td class="text-uppercase">
+                                {{#if (eq this.status 2)}}
+                                <span class="order-status-paid">{{this.statusName}}</span>
+                                {{else}}
+                                {{#if (eq this.status 4)}}
+                                <span class="order-status-pending">{{this.statusName}}</span>
+                                {{else}}
                                 <span class="product-brand">{{this.statusName}}</span>
+                                {{/if}}
+                                {{/if}}
                             </td>
+
                             <td class="text-uppercase">
                                 {{#if (eq this.status 2)}}
                                 <span class="order-status-paid">{{this.paymentDetails.status}}</span>
@@ -92,10 +124,12 @@
                                     <div class="button button-view mr-2">
                                         <i class="fa-solid fa-eye" href="/orders/{{this.id}}"></i>
                                     </div>
-                                    <a class="button button-edit mr-2" href="/orders/edit/{{this.id}}" style="text-decoration: none;">
+                                    <a class="button button-edit mr-2" href="/orders/edit/{{this.id}}"
+                                        style="text-decoration: none;">
                                         <i class="fa-solid fa-pen"></i>
                                     </a>
-                                    <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                    <button type="button" class="button button-delete mr-2" data-bs-toggle="modal"
+                                        data-bs-target="#deleteModal">
                                         <i class="fa-solid fa-x"></i>
                                     </button>
                                 </div>
@@ -104,12 +138,14 @@
 
 
                         <!-- Modal -->
-                        <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                        <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel"
+                            aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <p>Are you sure you want to delete this order?</p>
@@ -118,7 +154,8 @@
                                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
                                             Close
                                         </button>
-                                        <button type="button" class="btn btn-dark button-delete-modal" data-id="{{this.id}}">
+                                        <button type="button" class="btn btn-dark button-delete-modal"
+                                            data-id="{{this.id}}">
                                             Delete
                                         </button>
                                     </div>
@@ -126,7 +163,7 @@
                             </div>
                         </div>
 
-                    {{/each}}
+                        {{/each}}
                 </table>
             </div>
         </div>
@@ -134,13 +171,22 @@
 
     <nav class="d-flex justify-content-center">
         <ul class="pagination">
+            {{#if (gt pagination.currentPage 1)}}
+            <li class="page-item">
+                <button class="page-link" data-page="{{subtract pagination.currentPage 1}}">&laquo;</button>
+            </li>
+            {{/if}}
             {{#each pagination.pages}}
-                <li class="page-item {{#if this.active}}active{{/if}}">
-                    <button class="page-link" data-page="{{this.number}}">{{this.number}}</button>
-                </li>
+            <li class="page-item {{#if this.active}}active{{/if}}">
+                <button class="page-link" data-page="{{this.number}}">{{this.number}}</button>
+            </li>
             {{/each}}
+            {{#if (lt pagination.currentPage pagination.totalPages)}}
+            <li class="page-item">
+                <button class="page-link" data-page="{{add pagination.currentPage 1}}">&raquo;</button>
+            </li>
+            {{/if}}
         </ul>
     </nav>
     <script src="/js/OrderList.js"></script>
 </div>
-
