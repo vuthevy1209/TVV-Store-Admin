@@ -3,7 +3,8 @@
 <header class="d-flex justify-content-between align-items-center">
     <form action="#" method="get" class="m-2" style="width: 500px">
         <div class="input-group-header d-flex justify-content-center align-items-center">
-            <input type="text" class="form-control" placeholder="Search here" style="height: 35px; border-radius: 30px" />
+            <input type="text" class="form-control" placeholder="Search here"
+                style="height: 35px; border-radius: 30px" />
         </div>
     </form>
 
@@ -18,9 +19,98 @@
         </div>
         <div class="profile">
             <div class="d-flex align-items-center">
-                <img src="https://res.cloudinary.com/duf2t1pkp/image/upload/v1734160942/wnjq1p5rtgax4uxjm6v3.jpg" alt="Profile">
+                <img src="https://res.cloudinary.com/duf2t1pkp/image/upload/v1734160942/wnjq1p5rtgax4uxjm6v3.jpg"
+                    alt="Profile">
+                <!-- Dropdown - User Information -->
+                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                    <a id="open-profile-modal" class="dropdown-item" href="#">
+                        Profile
+                    </a>
+                    <a class="dropdown-item" onclick="openChangePasswordModal()" href="#">
+                        Change password
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="/auth/logout">
+                        Logout
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 
 </header>
+
+
+
+<!-- Profile Modal -->
+<div id="profile-modal" class="modal">
+    <div class="modal-content">
+        <span id="close-modal" class="close-btn">&times;</span>
+        <!-- Profile Content -->
+        <div class="profile-container">
+            <!-- Avatar and User Info -->
+            <div class="profile-header">
+                <div class="avatar">
+                    <img id="avatar-img" src="https://via.placeholder.com/150" alt="User Avatar">
+                    <input type="file" id="avatar-input" accept="image/*">
+                    <label for="avatar-input" class="edit-avatar">Change Avatar</label>
+                </div>
+                <div class="user-info">
+                    <text class="username">John Doe</text>
+                    <p>Email: johndoe@example.com</p>
+                </div>
+            </div>
+
+            <!-- Edit Profile Form -->
+            <div class="update-profile">
+                <h3>Edit Profile</h3>
+                <form>
+                    <label for="first-name">First Name:</label>
+                    <input type="text" id="first-name" placeholder="Enter first name" required>
+
+                    <label for="last-name">Last Name:</label>
+                    <input type="text" id="last-name" placeholder="Enter last name" required>
+
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Change password Modal -->
+<div class="modal" id="change-password-modal">
+    <div class="modal-content">
+        <!-- Profile Container -->
+        <div class="profile-container">
+            <!-- Close Button -->
+            <span class="close-btn" onclick="closeChangePasswordModal()">&times;</span>
+            <div class="change-password">
+                <h3>Change Password</h3>
+                <form>
+                    <label for="current-password">Current Password:</label>
+                    <div class="password-container">
+                        <input type="password" id="current-password" placeholder="Enter current password" required>
+                        <i class="fa fa-eye toggle-password" onclick="togglePasswordVisibility('current-password')"></i>
+                    </div>
+
+                    <label for="new-password">New Password:</label>
+                    <div class="password-container">
+                        <input type="password" id="new-password" placeholder="Enter new password" required>
+                        <i class="fa fa-eye toggle-password" onclick="togglePasswordVisibility('new-password')"></i>
+                    </div>
+
+                    <label for="confirm-password">Confirm New Password:</label>
+                    <div class="password-container">
+                        <input type="password" id="confirm-password" placeholder="Confirm new password" required>
+                        <i class="fa fa-eye toggle-password" onclick="togglePasswordVisibility('confirm-password')"></i>
+                    </div>
+
+                    <button type="submit" class="save-btn">Save Changes</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/header.js"></script>

@@ -1,3 +1,4 @@
+require('dotenv').config(); // load the env variables
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -27,7 +28,10 @@ const hbs = engine({
         ...hbsHelpers(),
         includes: function (array, value) {
             return array && array.includes(value);
-        }
+        },
+        eq: function (a, b) {
+            return a === b;
+        },
     },
     runtimeOptions: {
         allowProtoPropertiesByDefault: true,
