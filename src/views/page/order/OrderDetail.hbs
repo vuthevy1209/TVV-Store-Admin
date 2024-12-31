@@ -1,32 +1,33 @@
 <div class="container p-4">
-    
 
-        <div class="card">
-            <div class="card-body">
-                <div class="card-sales-split">
-                    <h1>Order ID : {{order.id}}</h1>
-                    <input type="hidden" id="orderId" value="{{order.id}}">
-                </div>
-                <div class="row mb-4">
-                    <div class="col-md-6">
-                        <h5 class="text-primary">Customer Info</h5>
-                        <p class="mb-1"><strong>Email:</strong> {{order.customer.user.email}}</p>
-                        <p class="mb-1"><strong>Phone:</strong> {{order.shippingDetails.phone}}</p>
-                        <p class="mb-1"><strong>Address:</strong> {{order.shippingDetails.fullAddress}}</p>
-                    </div>
-                    <div class="col-md-6">
-                        <h5 class="text-primary">Order Info</h5>
-                        <p class="mb-1"><strong>Creation time:</strong> {{order.created_at}}</p>
-                        <p class="mb-1"><strong>Payment Status:</strong> <span
-                                class="text-success">{{order.paymentDetails.status}}</span></p>
-                        <p class="mb-1"><strong>Status:</strong> <span class="text-success" id="statusName">{{order.statusName}}</span>
-                        </p>
-                    </div>
-                </div>
 
+    <div class="card">
+        <div class="card-body">
+            <div class="card-sales-split">
+                <h1>Order ID : {{order.id}}</h1>
+                <input type="hidden" id="orderId" value="{{order.id}}">
             </div>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <h5 class="text-primary">Customer Info</h5>
+                    <p class="mb-1"><strong>Email:</strong> {{order.customer.user.email}}</p>
+                    <p class="mb-1"><strong>Phone:</strong> {{order.shippingDetails.phone}}</p>
+                    <p class="mb-1"><strong>Address:</strong> {{order.shippingDetails.fullAddress}}</p>
+                </div>
+                <div class="col-md-6">
+                    <h5 class="text-primary">Order Info</h5>
+                    <p class="mb-1"><strong>Creation time:</strong> {{order.created_at}}</p>
+                    <p class="mb-1"><strong>Payment Status:</strong> <span class="text-success"
+                            id="paymentStatus">{{order.paymentDetails.status}}</span></p>
+                    <p class="mb-1"><strong>Status:</strong> <span class="text-success"
+                            id="statusName">{{order.statusName}}</span>
+                    </p>
+                </div>
+            </div>
+
         </div>
-    
+    </div>
+
     <div class="col-lg-12">
         <div class="table-responsive rounded mb-3">
             <table class="data-tables table mb-0 tbl-server-info">
@@ -92,7 +93,7 @@
                             <h4>Update order status</h4>
                         </li>
                         <li class="total">
-                            <select class="form-select" id="category-select" name="orderStatus">
+                            <select class="form-select" id="order-status-select" name="orderStatus">
                                 <option value="">Order status</option>
                                 {{#each orderStatusList}}
                                 <option value="{{this.value}}" id="statusSelection" {{#if (eq this.value
@@ -107,7 +108,30 @@
 
         <div class="col-lg-12 p-4">
             <a class="btn button-edit me-2" id="updateBtn">Update</a>
-            <a class="btn button-delete">Cancel</a>
+            <a class="btn button-delete" href="/orders">Cancel</a>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="updateStatusModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateModalLabel">Confirm Update</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to update this order?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="closeUpdateModalBtn">
+                    Close
+                </button>
+                <button type="button" class="btn btn-dark button-delete-modal" data-id="{{this.id}}" id="updateModalBtn">
+                    Update
+                </button>
+            </div>
         </div>
     </div>
 </div>

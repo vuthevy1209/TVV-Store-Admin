@@ -50,15 +50,16 @@ class PaymentService {
         });
     }
 
-    async updatePaymentStatus(orderId, orderStatus) {
-        paymentStatus = orderStatus === OrderStatusEnum.COMPLETED.value ? 'paid' : 'cancel';
-        return PaymentDetails.update({
+    async updatePaymentStatus(orderId, orderStatus) { // update existing payment status
+        const paymentStatus = orderStatus === OrderStatusEnum.COMPLETED.value ? 'paid' : 'cancel';
+        const count = await PaymentDetails.update({
             status: paymentStatus
         }, {
             where: {
                 order_id: orderId
             }
         });
+        return paymentStatus;
     }
 
     

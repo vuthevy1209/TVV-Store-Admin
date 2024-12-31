@@ -170,3 +170,13 @@
 }
 
 
+.order-status-cancel{
+    background: #84a217;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.4rem;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+

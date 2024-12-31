@@ -42,6 +42,8 @@ class OrderService {
         const offset = (page - 1) * limit;
         const where = {};
 
+        where.is_deleted = false;
+
         if (searchParams.orderStatus) {
             where.status = searchParams.orderStatus;
         }
@@ -122,7 +124,10 @@ class OrderService {
     async fetchOrderById(orderId) {
         // Fetch the complete order information with associations
         const completeOrder = await Order.findOne({
-            where: { id: orderId },
+            where: { 
+                id: orderId,
+                is_deleted: false
+            },
             include: [
                 {
                     model: Customer,
@@ -184,43 +189,76 @@ class OrderService {
     // to be simple --> confirm / paid --> complete / cancel
     async updateOrderStatus(orderId, orderStatus) {
         const order = await Order.findByPk(orderId);
-            if (!order) {
-                throw new Error('Order not found');
+        if (!order) {
+            throw new Error('Order not found');
+        }
+
+        orderStatus = parseInt(orderStatus);
+        const oldStatus = order.status;
+        if(oldStatus === orderStatus){
+            throw new Error('Order status is the same');
+        }
+        return sequelize.transaction(async (transaction) => {
+
+            order.status = orderStatus;
+            await order.save({ transaction });
+
+            let paymentStatus = null;
+
+            // 1: update to complete
+            if (orderStatus === OrderStatusEnum.COMPLETED.value) {
+                paymentStatus = await paymentService.updatePaymentStatus(orderId, orderStatus, { transaction });
             }
-            const oldStatus = order.status;
-    
-        try{
-            
-            return sequelize.transaction(async (transaction) => {
-    
-                order.status = orderStatus;
-                await order.save({ transaction });
-    
-                // 1: update to complete
-                if (orderStatus === OrderStatusEnum.COMPLETED.value) {
-                    if (oldStatus === OrderStatusEnum.CONFIRMED.value) { // COD (paid is no need because it was paid before)
-                        await paymentService.updatePaymentStatus(orderId, orderStatus, { transaction });
-                    }
+            // 2: update to cancel
+            else if (orderStatus === OrderStatusEnum.CANCELLED.value) { // both COD and online payment need to update status to cancel
+                paymentStatus = await paymentService.updatePaymentStatus(orderId, orderStatus, { transaction });
+                
+                // return quantity to inventory
+                const orderItems = await OrderItems.findAll({
+                    where: { order_id: orderId }
+                });
+                await Promise.all(orderItems.map(async (orderItem) => {
+                    await productService.updateProductInventory(orderItem.product_id, -orderItem.quantity, { transaction });
+                }));
+            }
+            else {
+                throw new Error('Unsupported order status');
+            }
+
+            const resultStatus = {
+                orderStatus: OrderStatusEnum.properties[order.status].name,
+                paymentStatus: paymentStatus
+            }
+
+            const newSupportStatus = await this.getSupportedUpdateStatus(order.status);
+
+            console.log(`Order ${orderId} status updated to ${OrderStatusEnum.properties[order.status].name}`);
+            return {resultStatus, newSupportStatus};
+        });
+    }
+
+    async getSupportedUpdateStatus(orderStatus) {
+        let orderStatusList = [];
+        for (const status in OrderStatusEnum) {
+            if (OrderStatusEnum.hasOwnProperty(status)) {
+                if(OrderStatusEnum[status].value <= orderStatus){
+                    continue;
                 }
-    
-                // 2: update to cancel
-                if (orderStatus === OrderStatusEnum.CANCELLED.value) { // both COD and online payment need to update status to cancel
-                    await paymentService.updatePaymentStatus(orderId, orderStatus, { transaction });
-                    // return quantity to inventory
-                    const orderItems = await OrderItems.findAll({
-                        where: { order_id: orderId }
-                    });
-                    await Promise.all(orderItems.map(async (orderItem) => {
-                        await productService.updateProductInventory(orderItem.product_id, -orderItem.quantity, { transaction });
-                    }));
+                if(OrderStatusEnum[status].value === OrderStatusEnum.CANCELLED.value || OrderStatusEnum[status].value === OrderStatusEnum.COMPLETED.value){
+                    orderStatusList.push(OrderStatusEnum[status]);
                 }
-    
-                return OrderStatusEnum.properties[orderStatus].name;
+            }
+        }
+        return orderStatusList;
+    }
+
+    async deleteOrderById(orderId) {
+        return sequelize.transaction(async (transaction) => {
+            await Order.update({ is_deleted: true }, {
+                where: { id: orderId },
+                transaction
             });
-        }
-        catch(err){
-            throw new Error(`Error updating order status`);
-        }
+        });
     }
 
 }
