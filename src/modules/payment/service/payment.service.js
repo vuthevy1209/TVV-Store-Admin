@@ -3,6 +3,7 @@ const PaymentType = require('../model/paymentType');
 const VNPayDetails = require('../model/vnpayDetails');
 
 const PaymentTypeEnums = require('../enum/payment.enum');
+const { OrderStatusEnum } = require('../../order/enum/order.enum');
 
 
 
@@ -47,6 +48,18 @@ class PaymentService {
                 order_id: orderId
             }
         });
+    }
+
+    async updatePaymentStatus(orderId, orderStatus) { // update existing payment status
+        const paymentStatus = orderStatus === OrderStatusEnum.COMPLETED.value ? 'paid' : 'cancel';
+        const count = await PaymentDetails.update({
+            status: paymentStatus
+        }, {
+            where: {
+                order_id: orderId
+            }
+        });
+        return paymentStatus;
     }
 
     

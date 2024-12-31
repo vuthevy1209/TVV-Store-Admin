@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const orderStatus = urlParams.get('orderStatus');
     const categorySelect = document.getElementById('category-select');
@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Function to load orders
     async function loadOrders(queryParams) {
         try {
+            showLoading();
             const response = await fetch(`/orders?${queryParams.toString()}`, {
                 headers: {
                     'Accept': 'application/json'
@@ -53,14 +54,17 @@ document.addEventListener('DOMContentLoaded', function() {
             });
 
             if (!response.ok) {
+                hideLoading();
                 throw new Error('Network response was not ok');
             }
 
             const data = await response.json();
             updateOrderTable(data.orders);
             updatePagination(data.pagination);
+            hideLoading();
         } catch (error) {
-            console.error('Error loading orders:', error);
+            hideLoading();
+            showAlert('error', 'Error', error.message);
         }
     }
 
@@ -102,14 +106,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     <td>
                         <div class="d-flex align-items-center justify-content-center list-action">
                             <div class="button button-view mr-2">
-                                <i class="fa-solid fa-eye" href="/orders/${order.id}"></i>
+                                <a class="button button-view mr-2" href="/orders/${order.id}"
+                                    style="text-decoration: none;">
+                                    <i class="fa-solid fa-eye"></i>
+                                </a>
                             </div>
-                            <a class="button button-edit mr-2" href="/orders/edit/${order.id}" style="text-decoration: none;">
-                                <i class="fa-solid fa-pen"></i>
-                            </a>
                             <button type="button" class="button button-delete mr-2" data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal">
-                                        <i class="fa-solid fa-x"></i>
+                                data-bs-target="#deleteModal" data-id="${order.id}">
+                                <i class="fa-solid fa-x"></i>
                             </button>
                         </div>
                     </td>
@@ -146,4 +150,39 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Handle delete modal functionality
+    var deleteModal = document.getElementById('deleteModal');
+    deleteModal.addEventListener('show.bs.modal', function (event) {
+        var button = event.relatedTarget;
+        var orderId = button.getAttribute('data-id');
+        var confirmDeleteButton = document.getElementById('confirmDeleteButton');
+        confirmDeleteButton.setAttribute('data-id', orderId);
+    });
+
+    document.getElementById('confirmDeleteButton').addEventListener('click', async function () {
+        try {
+            showLoading();
+            var orderId = this.getAttribute('data-id');
+
+            const response = await fetch(`/orders/${orderId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            const result = await response.json();
+
+            hideLoading();
+            if (response.ok) {
+                showAlert('success', 'Success', result.message);
+                location.href = '/orders'; // Redirect to the orders page
+            } else {
+                showAlert('error', 'Error', result.message);
+            }
+        } catch (error) {
+            hideLoading();
+            showAlert('error', 'Error', error.message);
+        }
+    });
 });

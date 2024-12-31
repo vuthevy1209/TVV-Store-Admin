@@ -17,11 +17,52 @@ class OrderController {
 
             const orderStatusList = await orderService.getOrderStatusList();
 
-            return res.render('page/order/OrderList', { orders, pagination, orderStatusList, ...searchParams });
+            return res.render('page/order/OrderList', { orders, pagination, orderStatusList });
 
         } catch (err) {
             console.log(err);
             res.redirect('/page/error/error');
+        }
+    }
+
+    // [GET] /orders/:id
+    async show(req, res) {
+        const { id } = req.params;
+        try {
+            const order = await orderService.fetchOrderById(id);
+            console.log('Order fetched successfully');
+            const orderStatusList = await orderService.getSupportedUpdateStatus(order.status);
+            return res.render('page/order/OrderDetail', { order, orderStatusList });
+        } catch (err) {
+            console.log(err);
+            res.redirect('/page/error/error');
+        }
+    }
+
+    // [PATCH] /orders/update-status/:id
+    async updateStatus(req, res) {
+        const { id } = req.params;
+        const { orderStatus } = req.body;
+        try {
+            const {resultStatus, newSupportStatus} = await orderService.updateOrderStatus(id, orderStatus);
+            console.log('Order status updated successfully');
+            return res.json({ message: 'Order status updated successfully', resultStatus, newSupportStatus});
+        } catch (err) {
+            console.log(err);
+            res.status(400).json({ message: err.message });
+        }
+    }
+
+    // [DELETE] /orders/:id
+    async delete(req, res) {
+        const { id } = req.params;
+        try {
+            await orderService.deleteOrderById(id);
+            console.log('Order deleted successfully');
+            return res.json({ message: 'Order deleted successfully' });
+        } catch (err) {
+            console.log(err);
+            res.status(400).json({ message: err.message });
         }
     }
 }

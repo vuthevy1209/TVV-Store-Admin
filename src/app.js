@@ -52,6 +52,7 @@ app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public'))); // có tác dụng serve các file tĩnh như css, js, images
 
+require('./utils/node-cron.js');
 
 router(app);
 

@@ -69,6 +69,17 @@ class ProductService {
             where: {id}
         });
     }
+
+    // update quantity of product in inventory = inventory_quantity - quantity
+    async updateProductInventory(id, quantity) {
+        const product = await Product.findByPk(id);
+        if (product.inventory_quantity < quantity) {
+            throw new Error('Product' + product.name + ' is out of stock' + ' (available: ' + product.inventory_quantity + ')');
+        }
+        product.inventory_quantity -= quantity;
+
+        await product.save();
+    }
 }
 
 module.exports = new ProductService();
