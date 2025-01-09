@@ -3,16 +3,12 @@ const LocalStrategy = require('passport-local').Strategy;
 const userService = require('../../modules/user/service/user.service');
 const bcrypt = require('bcrypt');
 const User = require('../../modules/user/model/user')
-const GoogleStrategy = require("passport-google-oidc");
-const FederatedCredential = require("../../modules/auth/model/federatedCredential");
-const customerService = require("../../modules/customer/service/customer.service");
-const authService = require("../../modules/auth/service/auth.service");
 
 passport.serializeUser(function(user, cb) { // store user in session
     process.nextTick(function() {
         console.log(user.firstName)
         console.log(user.lastName)
-        cb(null, { id: user.id, username: user.username, firstName: user.first_name, lastName: user.last_name }); // store id and username in session
+        cb(null, { id: user.id, username: user.username, firstName: user.first_name, lastName: user.last_name}); // store id and username in session
     });
 });
 
@@ -32,7 +28,7 @@ passport.use(
         },
         async (username, password, cb) => {
             try {
-                const user = await userService.findByUsername(username);
+                const user = await userService.findAdminByUsername(username);
 
                 if (!user) {
                     return cb(null, false, { message: "User not found" });
@@ -51,51 +47,5 @@ passport.use(
         }
     ));
 
-// Dynamically determine the base URL
-const BASE_URL = process.env.NODE_ENV === 'production'
-    ? process.env.PROD_BASE_URL // Production URL
-    : process.env.DEV_BASE_URL;
-
-
-const clientID = process.env.GOOGLE_CLIENT_ID;
-const clientSecret = process.env.GOOGLE_CLIENT_SECRET;
-
-if (!clientID || !clientSecret) {
-    throw new Error('Google client ID and secret must be provided');
-}
-
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: `${BASE_URL}/oauth2/redirect/google`, // Full callback URL
-    scope: ['profile', 'email']
-}, async function verify(issuer, profile, cb) {
-    try {
-        const federatedCredential = await FederatedCredential.findOne({
-            where: {
-                provider: issuer,
-                subject: profile.id
-            }
-        });
-
-        if (!federatedCredential) {
-            const registerResult = await authService.registerWithGoogle(issuer, profile);
-            if (registerResult.error) {
-                throw new Error(registerResult.error);
-            }
-            const user = registerResult.user;
-
-            return cb(null, user);
-        } else {
-            const user = await User.findByPk(federatedCredential.user_id);
-            if (!user) {
-                return cb(null, false);
-            }
-            return cb(null, user);
-        }
-    } catch (err) {
-        return cb(err);
-    }
-}));
 
 module.exports = passport;

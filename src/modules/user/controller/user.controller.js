@@ -7,15 +7,16 @@ class UserController {
         const userId = req.user.id;
 
         try {
+            var avatarUrl = null;
             if(req.file) {
-                const avatarUrl = await userService.uploadAvatar(req.file);
+                avatarUrl = await userService.uploadAvatar(req.file);
                 await userService.updateUserProfileWithAvatar(userId, firstName, lastName, avatarUrl);
             }
             else {
                 await userService.updateUserProfile(userId, firstName, lastName);
             }
 
-            res.status(200).json({ message: 'Profile updated successfully' });
+            res.status(200).json({ message: 'Profile updated successfully', avatar_url: avatarUrl });
         } catch (error) {
             console.error('Error updating profile:', error);
             res.status(500).json({ message: 'An error occurred while updating the profile' });
