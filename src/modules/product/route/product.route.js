@@ -14,7 +14,6 @@ router.post('/store', validateProductRules, handleValidationErrors, productContr
 router.get('/edit/:id', productController.edit); // Render form
 router.put('/update', validateProductRules, handleValidationErrors, productController.update);
 
-
 // Delete a product
 router.delete('/:id', productController.delete);
 
