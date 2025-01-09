@@ -4,16 +4,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.querySelector('.hidden-file-input');
 
     // Handle file selection
-    fileInput.addEventListener('change', function (e) {
+    fileInput.addEventListener('change', function(e) {
         const files = Array.from(e.target.files);
         files.forEach(file => {
             if (file.type.startsWith('image/')) {
                 const reader = new FileReader();
-                reader.onload = function (e) {
+                reader.onload = function(e) {
                     const imageId = Date.now().toString();
                     addThumbnail(e.target.result, imageId);
                     if (!mainPreview.querySelector('img')) {
                         updateMainPreview(e.target.result);
+                    }
+                    // Remove error message if it exists
+                    const imageErrorMessage = document.querySelector('.image-upload-section .error-message');
+                    if (imageErrorMessage) {
+                        imageErrorMessage.remove();
                     }
                 };
                 reader.readAsDataURL(file);
@@ -83,7 +88,60 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById("productFormEdit");
 
     form.addEventListener("submit", async (e) => {
-        e.preventDefault(); // Ngăn hành vi mặc định của form
+        e.preventDefault();
+
+        const errorMessages = document.querySelectorAll('.error-message');
+        errorMessages.forEach(msg => msg.remove());
+
+        const inputs = form.querySelectorAll('.form-control');
+        let isValid = true;
+
+        inputs.forEach(input => {
+            const name = input.name;
+            if (name === 'discount' || name === 'discount_type') return;
+            const error = input.nextElementSibling;
+
+            if (input.value.trim() === '') {
+                input.classList.add('error');
+                isValid = false;
+
+                if (!error || !error.classList.contains('error-message')) {
+                    const errorMessage = document.createElement('div');
+                    errorMessage.classList.add('error-message');
+                    errorMessage.textContent = 'This field is required';
+                    input.parentElement.appendChild(errorMessage);
+                }
+            } else {
+                input.classList.remove('error');
+                if (error && error.classList.contains('error-message')) {
+                    error.remove();
+                }
+            }
+        });
+
+        // Kiểm tra xem có ít nhất một ảnh được chọn không
+        const imageInputs = document.querySelectorAll('.thumbnail-wrapper img');
+        const imageErrorMessage = document.querySelector('.image-upload-section .error-message');
+
+        if (imageInputs.length === 0) {
+            if (!imageErrorMessage) {
+                const newImageErrorMessage = document.createElement('div');
+                newImageErrorMessage.classList.add('error-message');
+                newImageErrorMessage.textContent = 'At least one image is required';
+                document.querySelector('.image-upload-section').appendChild(newImageErrorMessage);
+            }
+            isValid = false;
+        } else {
+            if (imageErrorMessage) {
+                imageErrorMessage.remove(); // Xóa thông báo lỗi nếu có ảnh
+            }
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        showLoading();
 
         const formData = new FormData(form);
 
@@ -150,17 +208,30 @@ document.addEventListener('DOMContentLoaded', function() {
 
             if (response.ok) {
                 const result = await response.json();
-                alert("Product updated successfully!");
+                showAlert('success', 'Success', result.message || 'Product updated successfully !');
+                hideLoading();
+
                 console.log(result);
-                form.reset();
             } else {
                 const error = await response.json();
-                alert("Error adding product: " + error.message);
+                showAlert('error', 'Error', error.message || 'An error occurred, Please try again !');
             }
         } catch (err) {
             console.error("Error:", err);
-            alert("An unexpected error occurred!");
+            showAlert('error', 'Error', 'An error occurred, Please try again !');
         }
     });
 
+    const inputs = document.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+        input.addEventListener('input', function () {
+            if (this.value.trim() !== '') {
+                const error = this.nextElementSibling;
+                this.classList.remove('error');
+                if (error && error.classList.contains('error-message')) {
+                    error.remove();
+                }
+            }
+        });
+    });
 });

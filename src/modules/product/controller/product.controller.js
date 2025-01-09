@@ -6,7 +6,7 @@ class ProductController{
     // [GET] /products
     async index(req, res, next) {
         try {
-            let {page = 1, limit = 3 } = req.query;
+            let {page = 1, limit = 10 } = req.query;
             if (typeof page !== 'number' || typeof limit !== 'number') {
                 page = parseInt(page);
                 limit = parseInt(limit);
@@ -42,7 +42,8 @@ class ProductController{
     // [POST] /products/store
     async store(req, res, next) {
         try {
-            const product = req.body.product;
+            console.log('req.body:', req.body);
+            const product = req.body;
 
             const formattedProduct = {
                 name: product.name,
@@ -54,8 +55,6 @@ class ProductController{
                 brand_id: parseInt(product.brand_id, 10),
                 image_urls: product.image_urls || []
             };
-
-            console.log('formattedProduct:', formattedProduct);
 
             const response = await productService.create(formattedProduct);
             res.json({ message: 'Product created successfully', product: response });

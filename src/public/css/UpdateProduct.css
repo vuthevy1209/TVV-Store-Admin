@@ -158,3 +158,13 @@
     border-color: #000000;
     box-shadow: 0 0 5px rgba(12, 12, 12, 0.5);
 }
+
+.form-control.error {
+    border-color: red;
+}
+
+.error-message {
+    color: red;
+    font-size: 0.9rem;
+    margin-top: 5px;
+}

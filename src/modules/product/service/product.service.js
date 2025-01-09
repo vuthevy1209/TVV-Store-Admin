@@ -29,6 +29,9 @@ class ProductService {
     async getProductsWithPagination({page = 1, limit = 3}) {
         const offset = (page - 1) * limit;
         const {rows: products, count: totalProducts} = await Product.findAndCountAll({
+            where: {
+                business_status: true
+            },
             include: [
                 {model: Category, attributes: ['name']},
                 {model: Brand, attributes: ['name']}
@@ -65,9 +68,11 @@ class ProductService {
 
     // delete a product
     async delete(id) {
-        return Product.destroy({
-            where: {id}
-        });
+        const product = await Product.findByPk(id);
+        // update business_status to false
+        product.business_status = false;
+
+        await product.save();
     }
 
     // update quantity of product in inventory = inventory_quantity - quantity
