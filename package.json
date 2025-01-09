@@ -20,6 +20,7 @@
     "dotenv": "^16.4.7",
     "express": "~4.16.1",
     "express-handlebars": "^8.0.1",
+    "express-validator": "^7.2.1",
     "flexsearch": "^0.7.43",
     "handlebars-helpers": "^0.10.0",
     "hbs": "~4.0.4",

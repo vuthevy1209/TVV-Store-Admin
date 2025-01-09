@@ -25,7 +25,7 @@
 
                                             <div class="form-group mb-3">
                                                 <label for="product-description">Product Description</label>
-                                                <textarea class="form-control" id="product-description" name="desc" rows="6" placeholder="Enter product description"></textarea>
+                                                <textarea class="form-control" id="product-description" name="desc" rows="6" placeholder="Enter product description" style="resize: none"></textarea>
                                             </div>
                                         </div>
                                     </div>
@@ -102,7 +102,6 @@
                                                 <div class="form-group col-6 mb-3">
                                                     <label for="product-category">Category</label>
                                                     <select class="form-select" id="product-category" name="category_id">
-                                                        <option value="">Select Category</option>
                                                         {{#each categoryList}}
                                                             <option value="{{this.id}}">{{this.name}}</option>
                                                         {{/each}}
@@ -112,7 +111,6 @@
                                                 <div class="form-group col-6 mb-3">
                                                     <label for="product-brand">Brand</label>
                                                     <select class="form-select" id="product-brand" name="brand_id">
-                                                        <option value="">Select Brand</option>
                                                         {{#each brandList}}
                                                             <option value="{{this.id}}">{{this.name}}</option>
                                                         {{/each}}

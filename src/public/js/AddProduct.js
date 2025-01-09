@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (!mainPreview.querySelector('img')) {
                         updateMainPreview(e.target.result);
                     }
+                    // Remove error message if it exists
+                    const imageErrorMessage = document.querySelector('.image-upload-section .error-message');
+                    if (imageErrorMessage) {
+                        imageErrorMessage.remove();
+                    }
                 };
                 reader.readAsDataURL(file);
             }
@@ -84,10 +89,61 @@ document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById("productForm");
 
     form.addEventListener("submit", async (e) => {
-        e.preventDefault(); // Ngăn hành vi mặc định của form
+        e.preventDefault();
+
+        const errorMessages = document.querySelectorAll('.error-message');
+        errorMessages.forEach(msg => msg.remove());
+
+        const inputs = form.querySelectorAll('.form-control');
+        let isValid = true;
+
+        inputs.forEach(input => {
+            const name = input.name;
+            if (name === 'discount' || name === 'discount_type') return;
+            const error = input.nextElementSibling;
+
+            if (input.value.trim() === '') {
+                input.classList.add('error');
+                isValid = false;
+
+                if (!error || !error.classList.contains('error-message')) {
+                    const errorMessage = document.createElement('div');
+                    errorMessage.classList.add('error-message');
+                    errorMessage.textContent = 'This field is required';
+                    input.parentElement.appendChild(errorMessage);
+                }
+            } else {
+                input.classList.remove('error');
+                if (error && error.classList.contains('error-message')) {
+                    error.remove();
+                }
+            }
+        });
+
+        const imageInputs = document.querySelectorAll('.thumbnail-wrapper img');
+        const imageErrorMessage = document.querySelector('.image-upload-section .error-message');
+
+        if (imageInputs.length === 0) {
+            if (!imageErrorMessage) {
+                const newImageErrorMessage = document.createElement('div');
+                newImageErrorMessage.classList.add('error-message');
+                newImageErrorMessage.textContent = 'At least one image is required';
+                document.querySelector('.image-upload-section').appendChild(newImageErrorMessage);
+            }
+            isValid = false;
+        } else {
+            if (imageErrorMessage) {
+                imageErrorMessage.remove(); // Xóa thông báo lỗi nếu có ảnh
+            }
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        showLoading();
 
         const formData = new FormData(form);
-
         const body = {};
 
         for (let [key, value] of formData.entries()) {
@@ -95,7 +151,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 body[key] = value;
             }
         }
-
 
         const uploadFile = async (image) => {
             try {
@@ -134,31 +189,48 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
 
-
         console.log(body);
+
         try {
             const response = await fetch("/products/store", {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({
-                    product: body,
-                }),
+                body: JSON.stringify(body),
             });
 
             if (response.ok) {
                 const result = await response.json();
-                alert("Product added successfully!");
-                console.log(result);
+                showAlert('success', 'Success', result.message || 'Product added successfully!');
+                hideLoading();
+                clearMainPreview();
+                // Clear only the thumbnails, keep the "+" button
+                const thumbnails = document.querySelectorAll('.thumbnail-wrapper');
+                thumbnails.forEach(thumbnail => thumbnail.remove());
+
                 form.reset();
+                console.log(result);
             } else {
                 const error = await response.json();
-                alert("Error adding product: " + error.message);
+                showAlert('error', 'Error', result.message || 'An error occurred. Please try again!');
             }
         } catch (err) {
             console.error("Error:", err);
-            alert("An unexpected error occurred!");
+            showAlert('error', 'Error', 'An error occurred. Please try again.');
         }
+    });
+
+    const inputs = document.querySelectorAll('.form-control');
+    inputs.forEach(input => {
+        input.addEventListener('input', function () {
+            if (this.value.trim() !== '') {
+                const error = this.nextElementSibling;
+                this.classList.remove('error');
+                if (error && error.classList.contains('error-message')) {
+                    error.remove();
+                }
+            }
+        });
     });
 });

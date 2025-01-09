@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Function to load products
-    async function loadProducts(page, limit = 3) {
+    async function loadProducts(page, limit = 10) {
         try {
             const response = await fetch(`/products?page=${page}&limit=${limit}`, {
                 headers: {
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <td>
                     <span class="product-category">${product.category.name}</span>
                 </td>
-                <td>$${product.price}</td>
+                <td>${product.price}</td>
                 <td class="text-uppercase">
                     <span class="product-brand">${product.brand.name}</span>
                 </td>
@@ -73,15 +73,15 @@ document.addEventListener('DOMContentLoaded', function() {
                         <a class="button button-edit mr-2" href="/products/edit/${product.id}" style="text-decoration: none;">
                             <i class="fa-solid fa-pen"></i>
                         </a>
-                        <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                        <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal-${product.id}">
                             <i class="fa-solid fa-x"></i>
                         </button>
                     </div>
                 </td>
             </tr>
-            
+
             <!-- Modal -->
-            <div class="modal" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal" id="deleteModal-${product.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -119,34 +119,33 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
     }
 
-
-    // Lắng nghe sự kiện click trên tất cả nút Delete
+    // Handle delete button click event
     document.querySelectorAll('.button-delete-modal').forEach(button => {
-        button.addEventListener('click', function () {
-            // Lấy id của sản phẩm từ data-id
+        button.addEventListener('click', async function () {
+            // Get the product ID from data-id
             const productId = this.getAttribute('data-id');
+            console.log("Product ID: ", productId);
 
-            // Gửi yêu cầu DELETE tới server
-            fetch(`/products/${productId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            })
-                .then(response => {
-                    if (response.ok) {
-                        alert('Product deleted successfully!');
-                        // Reload lại trang để cập nhật danh sách
-                        location.reload();
-                    } else {
-                        alert('Failed to delete product.');
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
+            try {
+                // Send DELETE request to the server
+                const response = await fetch(`/products/${productId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
                 });
+
+                if (response.ok) {
+                    const currentPage = document.querySelector('.pagination .active')?.querySelector('.page-link')?.dataset.page || 1;
+                    showAlert('success', 'Success', 'Product deleted successfully!');
+                    await loadProducts(currentPage);
+                } else {
+                    const result = await response.json();
+                    showAlert('error', 'Error', result.message || 'Failed to delete product');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
         });
     });
-
-
 });
