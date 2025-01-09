@@ -11,8 +11,39 @@ const router = require('./routes/index');
 
 const app = express();
 
+require('dotenv').config();
+
 // Connect to database
 connect();
+
+
+// passport
+const passport = require('./config/auth/passport');
+const session = require('express-session');
+const SequelizeStore = require('connect-session-sequelize')(session.Store);
+const {sequelize} = require('./config/database'); // Adjust the path to your Sequelize instance
+const MongoStore = require('connect-mongo');
+const mongoDb = require('./config/database/mongo');
+mongoDb.connect();
+
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        maxAge: parseInt(process.env.COOKIE_MAX_AGE, 10) // 24 hours
+    },
+    store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        collectionName: 'sessions', // Optional, default is 'sessions'
+        ttl: parseInt(process.env.SESSION_TTL, 10)
+    }),
+}));
+
+
+app.use(passport.initialize());
+// app.use(passport.authenticate('session'));
+app.use(passport.session());
 
 // view engine setup
 const viewsPath = path.join(__dirname, 'views');
@@ -51,6 +82,20 @@ app.use(cookieParser()); // parse các cookie gửi lên server
 app.use(express.json({ limit: '20mb' }));
 app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public'))); // có tác dụng serve các file tĩnh như css, js, images
+// Global variables
+
+
+// flash
+const flash = require('connect-flash');
+app.use(flash());
+app.use((req, res, next) => {
+    res.locals.user = req.user || null;
+    res.locals.success = req.flash("success");
+    res.locals.error = req.flash("error");
+
+    next();
+});
+
 
 require('./utils/node-cron.js');
 

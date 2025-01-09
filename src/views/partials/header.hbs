@@ -1,45 +1,113 @@
 <link rel="stylesheet" href="/css/header.css">
 
-<header class="d-flex justify-content-between align-items-center">
-    <form action="#" method="get" class="m-2" style="width: 500px">
-        <div class="input-group-header d-flex justify-content-center align-items-center">
-            <input type="text" class="form-control" placeholder="Search here"
-                style="height: 35px; border-radius: 30px" />
-        </div>
-    </form>
 
-    <div class="d-flex align-items-center justify-content-center">
-        <div class="notification">
-            <i class="fa-solid fa-bell"></i>
-            <span class="badge">3</span>
-        </div>
-        <div class="notification">
-            <i class="fa-solid fa-envelope"></i>
-            <span class="badge">5</span>
-        </div>
-        <div class="profile">
-            <div class="d-flex align-items-center">
-                <img src="https://res.cloudinary.com/duf2t1pkp/image/upload/v1734160942/wnjq1p5rtgax4uxjm6v3.jpg"
-                    alt="Profile">
-                <!-- Dropdown - User Information -->
-                <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
-                    <a id="open-profile-modal" class="dropdown-item" href="#">
-                        Profile
-                    </a>
-                    <a class="dropdown-item" onclick="openChangePasswordModal()" href="#">
-                        Change password
-                    </a>
-                    <div class="dropdown-divider"></div>
-                    <a class="dropdown-item" href="/auth/logout">
-                        Logout
-                    </a>
-                </div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+        <!-- Search Form -->
+        <form action="#" method="get" class="d-flex me-auto" style="width: 500px;">
+            <div class="input-group">
+                <input type="text" class="form-control" placeholder="Search here"
+                       style="height: 35px; border-radius: 30px;" />
+            </div>
+        </form>
+
+        <!-- Right Section -->
+        <div class="d-flex align-items-center">
+            <!-- Notifications -->
+            <div class="notification me-3 position-relative">
+                <i class="fa-solid fa-bell"></i>
+                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">3</span>
+            </div>
+            <div class="notification me-3 position-relative">
+                <i class="fa-solid fa-envelope"></i>
+                <span class="badge bg-danger position-absolute top-0 start-100 translate-middle">5</span>
+            </div>
+
+            <!-- Profile Dropdown -->
+            <div class="dropdown" >
+                <span id="firstName" class="mr-2 d-none d-lg-inline text-black-900 medium">{{user.firstName}}</span>
+
+                <img src="https://www.kindpng.com/picc/m/722-7221920_placeholder-profile-image-placeholder-png-transparent-png.png"
+                     alt="User profile picture" class="rounded-circle"
+                     id="avatar-dropdown" role="button"
+                     style="width: 40px; height: 40px; cursor: pointer; object-fit: cover;">
+
+
+                <!-- Dropdown Menu -->
+                <ul class="dropdown-menu" id="dropdownMenu" style="display: none; position: absolute; right: 0; top: 100%; background-color: white; border: 1px solid #ddd; border-radius: 5px; z-index: 1000; list-style: none; padding: 0;">
+                    <li>
+                        <a id="open-profile-modal" class="dropdown-item" href="#">
+                            Profile
+                        </a>
+                    </li>
+                    <li>
+                        <a id="open-change-password-modal" class="dropdown-item" onclick="openChangePasswordModal()" href="#">
+                            Change Password
+                        </a>
+                    </li>
+<!--                    <li>-->
+<!--                        <hr class="dropdown-divider">-->
+<!--                    </li>-->
+                    <li>
+                        <a class="dropdown-item d-flex align-items-center" href="/auth/logout">
+                            <i class="fa-solid fa-right-from-bracket me-2"></i> <!-- Logout Icon -->
+                            Logout
+                        </a>
+                    </li>
+
+                </ul>
             </div>
         </div>
     </div>
+</nav>
 
-</header>
+<script>
 
+</script>
+
+
+<!--<header class="d-flex justify-content-between align-items-center">-->
+<!--    <form action="#" method="get" class="m-2" style="width: 500px">-->
+<!--        <div class="input-group-header d-flex justify-content-center align-items-center">-->
+<!--            <input type="text" class="form-control" placeholder="Search here"-->
+<!--                   style="height: 35px; border-radius: 30px"/>-->
+<!--        </div>-->
+<!--    </form>-->
+
+<!--    <div class="d-flex align-items-center justify-content-center">-->
+<!--        <div class="notification">-->
+<!--            <i class="fa-solid fa-bell"></i>-->
+<!--            <span class="badge">3</span>-->
+<!--        </div>-->
+<!--        <div class="notification">-->
+<!--            <i class="fa-solid fa-envelope"></i>-->
+<!--            <span class="badge">5</span>-->
+<!--        </div>-->
+
+<!--        <div class="profile">-->
+<!--            <div class="d-flex align-items-center">-->
+<!--                <img src="https://res.cloudinary.com/duf2t1pkp/image/upload/v1734160942/wnjq1p5rtgax4uxjm6v3.jpg"-->
+<!--                     alt="Profile" id="userDropdown" onclick="toggleDropdown()">-->
+<!--                &lt;!&ndash; Dropdown - User Information &ndash;&gt;-->
+<!--                <div class="dropdown" id="dropdownMenu" style="display: none;">-->
+<!--                    <a id="open-profile-modal" class="dropdown-item" href="#">-->
+<!--                        Profile-->
+<!--                    </a>-->
+<!--                    <a class="dropdown-item" onclick="openChangePasswordModal()" href="#">-->
+<!--                        Change password-->
+<!--                    </a>-->
+<!--                    <div class="dropdown-divider"></div>-->
+<!--                    <a class="dropdown-item" href="/auth/logout">-->
+<!--                        Logout-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+
+<!--    </div>-->
+
+<!--</header>-->
 
 
 <!-- Profile Modal -->
@@ -57,7 +125,6 @@
                 </div>
                 <div class="user-info">
                     <text class="username">John Doe</text>
-                    <p>Email: johndoe@example.com</p>
                 </div>
             </div>
 
@@ -84,7 +151,7 @@
         <!-- Profile Container -->
         <div class="profile-container">
             <!-- Close Button -->
-            <span class="close-btn" onclick="closeChangePasswordModal()">&times;</span>
+            <span id="close-change-password-modal" class="close-btn">&times;</span>
             <div class="change-password">
                 <h3>Change Password</h3>
                 <form>
@@ -112,6 +179,15 @@
         </div>
     </div>
 </div>
+<div id="loading">
+    <div class="lds-ring">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</div>
+
 
 {{#if error}}
     <script>
