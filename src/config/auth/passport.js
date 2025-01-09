@@ -1,12 +1,12 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const userService = require('../../modules/user/services/user.services');
+const userService = require('../../modules/user/service/user.service');
 const bcrypt = require('bcrypt');
-const User = require('../../modules/user/models/user')
+const User = require('../../modules/user/model/user')
 const GoogleStrategy = require("passport-google-oidc");
-const FederatedCredential = require("../../modules/auth/models/federatedCredential");
-const customerService = require("../../modules/customer/services/customer.services");
-const authService = require("../../modules/auth/services/auth.services");
+const FederatedCredential = require("../../modules/auth/model/federatedCredential");
+const customerService = require("../../modules/customer/service/customer.service");
+const authService = require("../../modules/auth/service/auth.service");
 
 passport.serializeUser(function(user, cb) { // store user in session
     process.nextTick(function() {

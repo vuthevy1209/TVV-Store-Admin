@@ -60,30 +60,36 @@
     object-fit: cover;
 }
 
-.list-action .badge {
+.list-action .button {
     font-size: 0.8rem;
     cursor: pointer;
     transition: transform 0.2s;
     margin-right: 5px;
     padding: 0.5rem;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
 }
 
-.list-action .badge:hover {
+.list-action .button:hover {
     transform: scale(1.2);
 }
 
-.badge-info {
+.button-view {
     background-color: #17a2b8;
     color: #fff;
 }
 
-.badge-success {
+.button-edit {
     background-color: #28a745;
     color: #fff;
 }
 
-.badge-warning {
+.button-delete {
     background-color: #ffc107;
     color: #fff;
 }

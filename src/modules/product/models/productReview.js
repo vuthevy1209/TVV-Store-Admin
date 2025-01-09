@@ -1,8 +1,8 @@
-// src/modules/product/models/productReview.js
+// src/modules/product/model/productReview.js
 const { DataTypes } = require('@sequelize/core');
 const { sequelize } = require('../../../config/database');
 const Product = require('./product');
-const User = require('../../user/models/user');
+const User = require('../../user/model/user');
 
 const ProductReview = sequelize.define('ProductReview', {
     id: {

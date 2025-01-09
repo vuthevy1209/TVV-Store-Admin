@@ -1,3 +1,4 @@
+require('dotenv').config(); // load the env variables
 const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
@@ -29,7 +30,10 @@ const hbs = engine({
         ...hbsHelpers(),
         includes: function (array, value) {
             return array && array.includes(value);
-        }
+        },
+        eq: function (a, b) {
+            return a === b;
+        },
     },
     runtimeOptions: {
         allowProtoPropertiesByDefault: true,
@@ -45,11 +49,12 @@ app.set('view engine', '.hbs');
 app.set('views', viewsPath);
 
 app.use(logger('dev')); // log ra console các request đến server
-app.use(express.json()); // parse các request gửi lên server dưới dạng json
-app.use(express.urlencoded({extended: false})); // parse các request gửi lên server dưới dạng form
 app.use(cookieParser()); // parse các cookie gửi lên server
+app.use(express.json({ limit: '20mb' }));
+app.use(express.urlencoded({ limit: '20mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public'))); // có tác dụng serve các file tĩnh như css, js, images
 
+require('./utils/node-cron.js');
 
 router(app);
 

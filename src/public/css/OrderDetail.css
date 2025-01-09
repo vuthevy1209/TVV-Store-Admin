@@ -1,0 +1,288 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap');
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.add-list {
+    font-weight: 500;
+    padding: 0.6rem 1.5rem;
+    border-radius: 25px;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+
+.table thead th {
+    background-color: rgb(0, 0, 0);
+    color: #ffffff;
+    font-weight: 700;
+    border: none;
+    padding: 1rem;
+}
+
+.table thead th:first-child {
+    border-radius: 12px 0 0 0;
+}
+
+.table thead th:last-child {
+    border-radius: 0 12px 0 0;
+}
+
+.table tbody tr {
+    background-color: #ffffff;
+    transition: box-shadow 0.3s;
+}
+
+
+.table .checkbox-input {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.table td {
+    vertical-align: middle;
+    border-top: none;
+}
+
+.table img {
+    width: 50px;
+    height: auto;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.list-action .button {
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-right: 5px;
+    padding: 0.5rem;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+
+.list-action .button:hover {
+    transform: scale(1.2);
+}
+
+.button-view {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+.button-edit {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.button-delete {
+    background-color: #ffc107;
+    color: #fff;
+}
+
+.pagination .page-link {
+    border-radius: 12px;
+    transition: background-color 0.3s, color 0.3s;
+    color: #000000;
+}
+
+.pagination .page-link:hover {
+    background-color: #000000;
+    color: #fff;
+}
+
+.pagination .page-link:focus {
+    box-shadow: none;
+}
+
+.pagination .active .page-link {
+    background-color: #000000;
+    color: #fff;
+    border: none;
+}
+
+.form-control:focus {
+    border-color: #000000;
+    box-shadow: none;
+}
+
+.form-select:focus {
+    border-color: #000000;
+    box-shadow: none;
+}
+
+.product-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #343a40;
+}
+
+.product-category {
+    background: #706f6f;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.4rem;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.product-brand {
+    background: #155b36;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.4rem;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.order-status-paid{
+    background: #0ce32c;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.4rem;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+
+.order-status-pending{
+    background: #e32c2c;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.4rem;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+
+.total-order {
+    width: 100%;
+}
+
+.total-order ul {
+    margin: 0;
+    padding: 0
+}
+
+.total-order ul li {
+    border: 1px solid #f8f8f8;
+    border-top: 0;
+    display: flex
+}
+
+.total-order ul li h4 {
+    width: 50%;
+    color: #637381;
+    font-size: 14px;
+    font-weight: 500;
+    padding: 10px;
+    border-right: 1px solid #f8f8f8;
+    background: #fafbfe
+}
+
+.total-order ul li h5 {
+    color: #212b36;
+    font-size: 14px;
+    padding: 10px;
+    font-weight: 700;
+    text-align: right;
+    width: 50%
+}
+
+.total-order ul li option {
+    color: #212b36;
+    font-size: 14px;
+    padding: 10px;
+    font-weight: 700;
+    text-align: left;
+    width: 50%
+}
+
+.total-order ul li:first-child {
+    border-top: 1px solid #f8f8f8
+}
+
+.total-order ul li.total h5 {
+    color: #212b36;
+    font-weight: 700
+}
+
+.total-order ul li.total h4 {
+    color: #5e5873;
+    font-weight: 700
+}
+
+ol, ul {
+    list-style: none;
+}
+
+
+
+.card-sales-split {
+    padding-bottom: 25px;
+    border-bottom: 1px solid #e9ecef
+}
+
+@media(max-width:991px) {
+    .card-sales-split {
+        padding-bottom: 10px
+    }
+}
+
+@media(max-width:575px) {
+    .card-sales-split {
+        flex-direction: column
+    }
+
+    .card-sales-split ul {
+        margin-top: 15px
+    }
+}
+
+.card-sales-split h2 {
+    font-size: 14px;
+    font-weight: 600
+}
+
+.card-sales-split li {
+    margin: 0 15px
+}
+
+
+.card .card-body {
+    padding: 20px
+}
+
+@media(max-width:991px) {
+    .card .card-body {
+        padding: 15px
+    }
+}
+
+.card .card-body .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #212b36;
+    margin: 0 0 10px
+}
+
+@media(max-width:991px) {
+    .card .card-body .card-title {
+        font-size: 14px
+    }
+}

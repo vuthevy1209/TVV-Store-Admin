@@ -1,0 +1,142 @@
+<link rel="stylesheet" href="/css/UpdateProduct.css">
+<script src="/js/UpdateProduct.js"></script>
+
+<div class="container p-4">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between" style="background: black; color: white;">
+                    <div class="header-title">
+                        <h4 class="card-title">Edit Product</h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <form id="productFormEdit" data-id="{{product.id}}">
+                        <div class="row">
+                            <div class="col-7">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="information-section">
+                                            <h2>General Information</h2>
+                                            <div class="form-group mb-3">
+                                                <label for="product-name">Product Name</label>
+                                                <input type="text" class="form-control" id="product-name" name="name" placeholder="Enter product name" value="{{product.name}}">
+                                            </div>
+
+                                            <div class="form-group mb-3">
+                                                <label for="product-description">Product Description</label>
+                                                <textarea class="form-control" id="product-description" name="desc" rows="6" placeholder="Enter product description">
+                                                    {{product.desc}}
+                                                </textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="pricing-and-stock-section mt-3">
+                                            <h2>Pricing and Stock</h2>
+                                            <div class="row">
+                                                <div class="form-group col-4 mb-3">
+                                                    <label for="product-price">Price</label>
+                                                    <input type="number" class="form-control" id="product-price" name="price" placeholder="Enter product price" value="{{product.price}}">
+                                                </div>
+
+                                                <div class="form-group col-4 mb-3">
+                                                    <label for="product-quantity">Quantity</label>
+                                                    <input type="number" class="form-control" id="product-quantity" name="inventory_quantity" placeholder="Enter product quantity" value="{{product.inventory_quantity}}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-12">
+                                        <div class="discount-section mt-3" style="background: #f9f9f9; padding: 1rem; border-radius: 15px;">
+                                            <h2>Discount</h2>
+                                            <div class="row">
+                                                <div class="form-group col-6 mb-3">
+                                                    <label for="product-discount">Discount</label>
+                                                    <input type="number" class="form-control" id="product-discount" name="discount" placeholder="Enter product discount" value="{{product.discount}}">
+                                                </div>
+                                                <div class="form-group col-6 mb-3">
+                                                    <label for="product-discount-type">Discount Type</label>
+                                                    <input type="text" class="form-control" id="product-discount-type" name="discount_type" placeholder="Enter product discount type" value="{{product.discount_type}}">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-5">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <div class="image-upload-section">
+                                            <h2>Product Images</h2>
+                                            <div class="main-image-preview mb-3">
+                                                {{#if product.image_urls.[0]}}
+                                                    <img src="{{product.image_urls.[0]}}" alt="Main preview" class="main-preview-img">
+                                                {{else}}
+                                                    <div class="upload-placeholder">
+                                                        <i class="upload-icon"></i>
+                                                    </div>
+                                                {{/if}}
+                                            </div>
+
+                                            <div class="thumbnail-strip d-flex align-items-center">
+                                                {{#each product.image_urls}}
+                                                    <div class="thumbnail-wrapper" data-image-id="{{@index}}">
+                                                        <img src="{{this}}" alt="thumbnail" class="thumbnail-img">
+                                                        <button type="button" class="remove-image" data-image-id="{{@index}}">
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </div>
+                                                {{/each}}
+                                                <label class="add-image-button">
+                                                    <input type="file" name="image_urls" multiple accept="image/*" class="hidden-file-input">
+                                                    <i class="fas fa-plus"></i>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="category-and-brand-section mt-3" style="background: #f9f9f9; padding: 1rem; border-radius: 15px;">
+                                            <h2>Category and Brand</h2>
+                                            <div class="row">
+                                                <div class="form-group col-6 mb-3">
+                                                    <label for="product-category">Category</label>
+                                                    <select class="form-select" id="product-category" name="category_id" value="{{product.category_id}}">
+                                                        <option value="">Select Category</option>
+                                                        {{#each categoryList}}
+                                                            <option value="{{this.id}}">{{this.name}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+
+                                                <div class="form-group col-6 mb-3">
+                                                    <label for="product-brand">Brand</label>
+                                                    <select class="form-select" id="product-brand" name="brand_id">
+                                                        <option value="">Select Brand</option>
+                                                        {{#each brandList}}
+                                                            <option value="{{this.id}}">{{this.name}}</option>
+                                                        {{/each}}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <button type="submit" class="btn btn-dark">Update Product</button>
+                            <button type="reset" class="btn btn-outline-dark">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

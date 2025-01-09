@@ -50,6 +50,36 @@ class ProductService {
 
         return {productList, pagination};
     }
+
+    // Create a new product
+    async create(product) {
+        return Product.create(product);
+    }
+
+    // Update a product
+    async update(id, product) {
+        return Product.update(product, {
+            where: {id}
+        });
+    }
+
+    // delete a product
+    async delete(id) {
+        return Product.destroy({
+            where: {id}
+        });
+    }
+
+    // update quantity of product in inventory = inventory_quantity - quantity
+    async updateProductInventory(id, quantity) {
+        const product = await Product.findByPk(id);
+        if (product.inventory_quantity < quantity) {
+            throw new Error('Product' + product.name + ' is out of stock' + ' (available: ' + product.inventory_quantity + ')');
+        }
+        product.inventory_quantity -= quantity;
+
+        await product.save();
+    }
 }
 
 module.exports = new ProductService();
