@@ -42,7 +42,6 @@ class ProductController{
     // [POST] /products/store
     async store(req, res, next) {
         try {
-            console.log('req.body:', req.body);
             const product = req.body;
 
             const formattedProduct = {
@@ -78,7 +77,7 @@ class ProductController{
     // [PUT] /products/update
     async update(req, res, next) {
         try {
-            const product = req.body.product;
+            const product = req.body;
             const id  = product.id;
 
             const formattedProduct = {
@@ -92,7 +91,6 @@ class ProductController{
                 image_urls: product.image_urls || []
             };
 
-            console.log('formattedProduct:', formattedProduct);
 
             await productService.update(id, formattedProduct);
 

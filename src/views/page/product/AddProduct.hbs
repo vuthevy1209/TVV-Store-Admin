@@ -101,7 +101,10 @@
                                             <div class="row">
                                                 <div class="form-group col-6 mb-3">
                                                     <label for="product-category">Category</label>
-                                                    <select class="form-select" id="product-category" name="category_id">
+                                                    <button type="button" class="btn btn-sm btn-primary add-button" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                    <select class="form-select selectpicker" id="product-category" name="category_id" data-live-search="true">
                                                         {{#each categoryList}}
                                                             <option value="{{this.id}}">{{this.name}}</option>
                                                         {{/each}}
@@ -110,7 +113,10 @@
 
                                                 <div class="form-group col-6 mb-3">
                                                     <label for="product-brand">Brand</label>
-                                                    <select class="form-select" id="product-brand" name="brand_id">
+                                                    <button type="button" class="btn btn-sm btn-primary add-button" data-bs-toggle="modal" data-bs-target="#addBrandModal">
+                                                        <i class="fas fa-plus"></i>
+                                                    </button>
+                                                    <select class="form-select selectpicker" id="product-brand" name="brand_id" data-live-search="true">
                                                         {{#each brandList}}
                                                             <option value="{{this.id}}">{{this.name}}</option>
                                                         {{/each}}
@@ -131,6 +137,62 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Adding Category -->
+<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addCategoryForm">
+                    <div class="mb-3">
+                        <label for="categoryName" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" id="categoryName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="categoryDesc" class="form-label">Description</label>
+                        <textarea class="form-control" id="categoryDesc" name="description" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="addCategoryForm" class="btn btn-primary">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for Adding Brand -->
+<div class="modal fade" id="addBrandModal" tabindex="-1" aria-labelledby="addBrandModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addBrandModalLabel">Add New Brand</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="addBrandForm">
+                    <div class="mb-3">
+                        <label for="brandName" class="form-label">Brand Name</label>
+                        <input type="text" class="form-control" id="brandName" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="brandDesc" class="form-label">Description</label>
+                        <textarea class="form-control" id="brandDesc" name="description" rows="3" required></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="submit" form="addBrandForm" class="btn btn-primary">Save</button>
             </div>
         </div>
     </div>

@@ -11,6 +11,10 @@ const Brand = sequelize.define('Brand', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    logo: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
     desc: {
         type: DataTypes.TEXT
     },
