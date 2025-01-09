@@ -1,4 +1,4 @@
-// src/routes/user.js
+// src/route/user.js
 const express = require('express');
 const router = express.Router();
 const upload = require('../../../config/upload');

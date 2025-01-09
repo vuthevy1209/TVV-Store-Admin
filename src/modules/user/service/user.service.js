@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const User = require('../model/user');
+const Role = require('../model/role');
 const { sequelize } = require('../../../config/database'); // Adjust the path to your database configuration
 const cloudinary = require('../../../config/cloudinary');
 
@@ -146,6 +147,25 @@ class UserServices {
                 where: { id: userId },
             }
         );
+    }
+
+    // find admin by username
+    async findAdminByUsername(username) {
+        try {
+            const user = await User.findOne({
+                where: { username },
+                include: [{
+                    model: Role,
+                    where: { name: 'admin' }
+                }]
+            });
+            if (!user) {
+                throw new Error('Admin not found');
+            }
+            return user;
+        } catch (error) {
+            return { error: error.message };
+        }
     }
 }
 
