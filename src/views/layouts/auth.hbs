@@ -8,33 +8,50 @@
     <link rel="stylesheet" href="/css/login.css">
 </head>
 <body>
-<div class="background">
-    <div class="shape"></div>
-    <div class="shape"></div>
-</div>
-<form id="loginForm">
-    <h3>Login Here</h3>
-
-    <label for="username">Username</label>
-    <input type="text" name="username" placeholder="Username" id="username" required>
-
-    <label for="password">Password</label>
-    <input type="password" name="password" placeholder="Password" id="password" required>
-    <i class="far fa-eye toggle-password" id="togglePassword"></i>
-
-    <button type="submit">Log In</button>
-</form>
-
-<div id="loading">
-    <div class="lds-ring">
-        <div></div>
-        <div></div>
-        <div></div>
-        <div></div>
+    <div class="background">
+        <div class="shape"></div>
+        <div class="shape"></div>
     </div>
-</div>
+    <form id="loginForm">
+        <h3>Login Here</h3>
 
-<script src="/js/login.js"></script>
-<script src="/js/main.js"></script>
+        <label for="username">Username</label>
+        <input type="text" name="username" placeholder="Username" id="username" required>
+
+        <label for="password">Password</label>
+        <input type="password" name="password" placeholder="Password" id="password" required>
+        <i class="far fa-eye toggle-password" id="togglePassword"></i>
+
+        <button type="submit">Log In</button>
+    </form>
+
+    <div id="loading">
+        <div class="lds-ring">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+        </div>
+    </div>
+
+    <script src="/js/login.js"></script>
+    <script src="/js/main.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+
+    {{#if error}}
+        <script>
+            //# sourceURL=auth.js
+            swal("Error", "{{{error.[0]}}}", "error");
+        </script>
+    {{/if}}
+
+    {{#if success}}
+        <script>
+            //# sourceURL=auth.js
+            swal("Success", "{{{success.[0]}}}", "success");
+        </script>
+    {{/if}}
+
 </body>
 </html>

@@ -4,7 +4,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
     const formData = new FormData(this);
     const data = Object.fromEntries(formData.entries());
 
-    //showLoading();
+    showLoading();
 
     try {
         const response = await fetch('/auth/login', {
@@ -19,12 +19,12 @@ document.getElementById('loginForm').addEventListener('submit', async function (
         if (response.ok && result.redirectUrl) {
             window.location.href = result.redirectUrl;
         } else {
-            //showAlert('error', 'Error', result.message || 'Login failed!');
+            showAlert('error', 'Error', result.message || 'Login failed!');
         }
 
     } catch (error) {
         console.error('Error:', error);
-        //showAlert('error', 'Error', 'An error occurred. Please try again.');
+        showAlert('error', 'Error', 'An error occurred. Please try again.');
     }
 });
 
