@@ -10,6 +10,8 @@ const router = require('./routes/index');
 
 const app = express();
 
+require('dotenv').config();
+
 // Connect to database
 connect();
 
