@@ -85,6 +85,10 @@ class ProductService {
 
         await product.save();
     }
+
+    async getTotalProducts() {
+        return Product.count();
+    }
 }
 
 module.exports = new ProductService();
