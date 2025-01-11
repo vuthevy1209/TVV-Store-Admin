@@ -186,109 +186,64 @@ class OrderService {
     }
     
 
+    async buildQuery(today, period, groupUnit) {
+        const startOfPeriod = moment(today).startOf(period).toDate();
+        const endOfPeriod = moment(today).endOf(period).toDate();
+        const where = {
+            created_at: { [Op.gte]: startOfPeriod, [Op.lte]: endOfPeriod },
+            [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }],
+            is_deleted: false,
+        };
+        const groupBy = [sequelize.literal(`EXTRACT(${groupUnit} FROM "order"."created_at")`)];
+        return { where, groupBy };
+    }
+    
     async getRevenueByDay(today) {
-        const startOfDay = moment(today).startOf('day').toDate();
-        const endOfDay = moment(today).endOf('day').toDate();
-        const where = {
-            created_at: {
-                [Op.gte]: startOfDay,
-                [Op.lte]: endOfDay
-            },
-            [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }],
-            is_deleted: false,
-        };
-        const groupBy = [sequelize.literal('EXTRACT(day FROM "order"."created_at")')];
-        const {revenueData: newRevenueData, paymentData: newPaymentData} = await this.getRevenueChartData(where, groupBy);
+        const { where, groupBy } = await this.buildQuery(today, 'day', 'day');
+        const { revenueData: rawRevenueData, paymentData } = await this.getRevenueChartData(where, groupBy);
+    
+        const revenueData = [rawRevenueData[moment(today).date()] || 0];
         const revenueLabels = ['Today'];
-        if(newRevenueData.length===0){
-            return { revenueData: [0], revenueLabels, paymentData: newPaymentData };
-        }
-        return { revenueData: newRevenueData[startOfDay.getDate()], revenueLabels, paymentData: newPaymentData };
+    
+        return { revenueData, revenueLabels, paymentData };
     }
-
+    
     async getRevenueByWeek(today) {
-        const startOfWeek = moment(today).startOf('week').toDate();
-        const endOfWeek = moment(today).endOf('week').toDate();
-        const where = {
-            created_at: {
-                [Op.gte]: startOfWeek,
-                [Op.lte]: endOfWeek
-            },
-            [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }],
-            is_deleted: false,
-        };
-        const groupBy = [sequelize.literal('EXTRACT(day FROM "order"."created_at")')];
-        const {revenueData: newRevenueData, paymentData: newPaymentData} = await this.getRevenueChartData(where, groupBy);
-        const revenueLabels =[];
-        const revenueData=[];
-        for (let i = 0; i < 7; i++) {
-            revenueLabels.push(moment(startOfWeek).add(i, 'days').format('dddd'));
-            const day = i+startOfWeek.getDate();
-            console.log('Day:', day);
-            if(newRevenueData[day]){
-                revenueData.push(newRevenueData[day]);
-            }
-            else{
-                revenueData.push(0);
-            }
-        }
-        return { revenueData, revenueLabels, paymentData: newPaymentData };
-
+        const { where, groupBy } = await this.buildQuery(today, 'week', 'day');
+        const { revenueData: rawRevenueData, paymentData } = await this.getRevenueChartData(where, groupBy);
+    
+        const startOfWeek = moment(today).startOf('week');
+        const revenueLabels = Array.from({ length: 7 }, (_, i) => startOfWeek.clone().add(i, 'days').format('dddd'));
+        const revenueData = revenueLabels.map((_, i) => rawRevenueData[startOfWeek.clone().add(i, 'days').date()] || 0);
+    
+        return { revenueData, revenueLabels, paymentData };
     }
-
+    
     async getRevenueByMonth(today) {
-        const startOfMonth = moment(today).startOf('month').toDate();
-        const endOfMonth = moment(today).endOf('month').toDate();
-        const where = {
-            created_at: {
-                [Op.gte]: startOfMonth,
-                [Op.lte]: endOfMonth
-            },
-            [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }],
-            is_deleted: false,
-        };
-        const groupBy = [sequelize.literal('EXTRACT(day FROM "order"."created_at")')];
-        const { revenueData: newRevenueData, paymentData: newPaymentData } = await this.getRevenueChartData(where, groupBy);
-        const revenueLabels = [];
-        const revenueData = [];
-        for (let i = 1; i <= moment(today).daysInMonth(); i++) {
-            revenueLabels.push(i);
-            if (newRevenueData[i]) {
-                revenueData.push(newRevenueData[i]);
-            } else {
-                revenueData.push(0);
-            }
-        }
-        return { revenueData, revenueLabels, paymentData: newPaymentData };
+        const { where, groupBy } = await this.buildQuery(today, 'month', 'day');
+        const { revenueData: rawRevenueData, paymentData } = await this.getRevenueChartData(where, groupBy);
+    
+        const daysInMonth = moment(today).daysInMonth();
+        const revenueLabels = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+        const revenueData = revenueLabels.map(day => rawRevenueData[day] || 0);
+    
+        return { revenueData, revenueLabels, paymentData };
     }
-
+    
     async getRevenueByYear(today) {
-        const startOfYear = moment(today).startOf('year').toDate();
-        const endOfYear = moment(today).endOf('year').toDate();
-        const where = {
-            created_at: {
-                [Op.gte]: startOfYear,
-                [Op.lte]: endOfYear
-            },
-            [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }],
-            is_deleted: false,
-        };
-        const groupBy = [sequelize.literal('EXTRACT(month FROM "order"."created_at")')];
-        const { revenueData: newRevenueData, paymentData: newPaymentData } = await this.getRevenueChartData(where, groupBy);
-        const revenueLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        const revenueData = [];
-        for (let i = 1; i <= 12; i++) {
-            if (newRevenueData[i]) {
-                revenueData.push(newRevenueData[i]);
-            } else {
-                revenueData.push(0);
-            }
-        }
-        return { revenueData, revenueLabels, paymentData: newPaymentData };
+        const { where, groupBy } = await this.buildQuery(today, 'year', 'month');
+        const { revenueData: rawRevenueData, paymentData } = await this.getRevenueChartData(where, groupBy);
+    
+        const revenueLabels = [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        const revenueData = revenueLabels.map((_, i) => rawRevenueData[i + 1] || 0);
+    
+        return { revenueData, revenueLabels, paymentData };
     }
-
+    
     async getRevenueChartData(where, groupBy) {
-        
         const result = await PaymentDetails.findAll({
             attributes: [
                 [...groupBy, 'label'],
@@ -296,34 +251,26 @@ class OrderService {
                 [sequelize.literal(`SUM(CASE WHEN payment_type_id = ${PaymentTypeEnum.VNPAY} THEN subtotal ELSE 0 END)`), 'vnPayData'],
                 [sequelize.literal(`SUM(CASE WHEN payment_type_id = ${PaymentTypeEnum.CASH} THEN subtotal ELSE 0 END)`), 'cashData']
             ],
-            include: [
-                {
-                    model: Order,
-                    as: 'order',
-                    where: where,
-                    attributes: []
-                }
-            ],
+            include: [{ model: Order, as: 'order', where, attributes: [] }],
             group: groupBy,
-            order: groupBy
+            order: groupBy,
         });
-
+    
         let vnPayData = 0;
         let cashData = 0;
         let revenueData = {};
-
+    
         result.forEach(item => {
-            if (item.get('vnPayData')) {
-                vnPayData = DecimalUtil.add(vnPayData, item.get('vnPayData'));
-            } else if (item.get('cashData')) {
-                cashData = DecimalUtil.add(cashData, item.get('cashData'));
-            }
-
-            revenueData[item.get('label')] = item.get('revenueData');
+            const label = item.get('label');
+            revenueData[label] = item.get('revenueData') || 0;
+            vnPayData = DecimalUtil.add(vnPayData, item.get('vnPayData') || 0);
+            cashData = DecimalUtil.add(cashData, item.get('cashData') || 0);
         });
-
-        return {revenueData, paymentData:[vnPayData, cashData]};
+    
+        return { revenueData, paymentData: [vnPayData, cashData] };
     }
+    
+    
 }
 
 module.exports = new OrderService();
