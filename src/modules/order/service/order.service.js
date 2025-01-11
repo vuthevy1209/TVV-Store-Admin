@@ -14,6 +14,7 @@ const moment = require('moment');
 const DecimalUtil = require('../../../utils/decimal.utils');
 const { OrderStatusEnum } = require('../enum/order.enum');
 const PaymentTypeEnum = require('../../payment/enum/payment.enum');
+const User = require('../../user/model/user');
 
 class OrderService {
 
