@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const barCtx = document.getElementById('revenueColumnChart').getContext('2d');
     const pieCtx = document.getElementById('revenuePieChart').getContext('2d');
 
@@ -14,14 +14,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 backgroundColor: '#4caf50',
                 borderColor: '#388e3c',
                 borderWidth: 1
-            }, {
-                type: 'line',
-                label: 'Revenue Trend',
-                data: [],
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 2,
-                fill: false
             }]
         },
         options: {
@@ -47,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 tooltip: {
                     callbacks: {
-                        label: function(tooltipItem) {
+                        label: function (tooltipItem) {
                             return '$' + tooltipItem.raw;
                         }
                     }
@@ -59,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const revenuePieChart = new Chart(pieCtx, {
         type: 'pie',
         data: {
-            labels: ['Cash', 'VNPay'],
+            labels: ['VNPay', 'Cash'],
             datasets: [{
                 label: 'Payment Type',
                 data: [],
@@ -76,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 },
                 tooltip: {
                     callbacks: {
-                        label: function(tooltipItem) {
+                        label: function (tooltipItem) {
                             return '$' + tooltipItem.raw;
                         }
                     }
@@ -86,40 +78,43 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Function to update the chart data based on the selected time range
-    function updateChartData(timeRange) {
-        // Fetch new data based on the time range
-        fetch(`/dashboard/data?timeRange=${timeRange}`)
-            .then(response => response.json())
-            .then(data => {
-                const newData = data.revenueData || [];
-                const newLabels = data.revenueLabels || [];
-                const newPaymentData = data.paymentData || [];
+    async function updateChartData(timeRange) {
+        try {
+            showLoading();
+            const response = await fetch(`/dashboard/data?timeRange=${timeRange}`);
+            const data = await response.json();
+            const newData = data.result.revenueData || [];
+            const newLabels = data.result.revenueLabels || [];
+            const newPaymentData = data.result.paymentData || [];
 
-                revenueColumnChart.data.labels = newLabels;
-                revenueColumnChart.data.datasets[0].data = newData; // Update bar chart data
-                revenueColumnChart.data.datasets[1].data = newData; // Update line chart data
-                revenueColumnChart.update();
+            hideLoading();
+            revenueColumnChart.data.labels = newLabels;
+            revenueColumnChart.data.datasets[0].data = newData; // Update bar chart data
+            revenueColumnChart.update();
 
-                revenuePieChart.data.datasets[0].data = newPaymentData;
-                revenuePieChart.update();
-            })
-            .catch(error => console.error('Error fetching chart data:', error));
+            revenuePieChart.data.datasets[0].data = newPaymentData;
+            revenuePieChart.update();
+        } catch (error) {
+            hideLoading();
+            showAlert('error','Error', 'Failed to fetch data');
+        }
+
     }
 
     // Event listeners for time range buttons
-    document.getElementById('dayButtonChart').addEventListener('click', function() {
+    document.getElementById('dayButtonChart').addEventListener('click', function () {
         updateChartData('day');
     });
 
-    document.getElementById('weekButtonChart').addEventListener('click', function() {
+    document.getElementById('weekButtonChart').addEventListener('click', function () {
         updateChartData('week');
     });
 
-    document.getElementById('monthButtonChart').addEventListener('click', function() {
+    document.getElementById('monthButtonChart').addEventListener('click', function () {
         updateChartData('month');
     });
 
-    document.getElementById('yearButtonChart').addEventListener('click', function() {
+    document.getElementById('yearButtonChart').addEventListener('click', function () {
         updateChartData('year');
     });
 

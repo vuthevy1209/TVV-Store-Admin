@@ -2,6 +2,7 @@ const { response } = require('express');
 const orderService = require('../../order/service/order.service');
 const productService = require('../../product/service/product.service');
 const moment = require('moment');
+const DecimalUtils = require('../../../utils/decimal.utils');
 
 class SiteService{
 
@@ -9,7 +10,8 @@ class SiteService{
     // total orders
     // total products
     async getInitialData(){
-        const {totalOrder, totalRevenue} = await orderService.getTotalOrder();
+        let {totalOrder, totalRevenue} = await orderService.getTotalOrder();
+        totalRevenue = DecimalUtils.divide(totalRevenue, 1000); // Convert to thousand 
         const totalProduct = await productService.getTotalProducts();
 
         return {response: {totalOrder, totalRevenue, totalProduct}};
@@ -37,11 +39,9 @@ class SiteService{
 
         const today = new Date();
         if(timeRange==='day'){
-            revenueLabels.push('Today');
             tmp = await orderService.getRevenueByDay(today);
         }
         else if(timeRange==='week'){
-            revenueLabels = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             tmp = await orderService.getRevenueByWeek(today);
         }
         else if (timeRange === 'month') {
@@ -56,19 +56,15 @@ class SiteService{
             tmp = await orderService.getRevenueByMonth(today);
         }
         else if(timeRange==='year'){
-            revenueLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             tmp = await orderService.getRevenueByYear(today);
         }
 
         revenueData = tmp.revenueData;
         paymentData = tmp.paymentData;
         revenueLabels = tmp.revenueLabels;
-        console.log('PAYMENT DATA IN SITE SERVICE', paymentData);
-        console.log('REVENUE DATA IN SITE SERVICE', revenueData);
-        console.log('REVENUE LABELS IN SITE SERVICE', revenueLabels);
 
 
-        return {response: {revenueData, paymentData, revenueLabels}};
+        return {revenueData, paymentData, revenueLabels};
     }
 
     

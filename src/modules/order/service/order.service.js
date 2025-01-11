@@ -188,7 +188,12 @@ class OrderService {
             is_deleted: false,
         };
         const groupBy = [sequelize.literal('EXTRACT(day FROM "order"."created_at")')];
-        return this.getRevenueChartData(where, groupBy);
+        const {revenueData: newRevenueData, paymentData: newPaymentData} = await this.getRevenueChartData(where, groupBy);
+        const revenueLabels = ['Today'];
+        if(newRevenueData.length===0){
+            return { revenueData: [0], revenueLabels, paymentData: newPaymentData };
+        }
+        return { revenueData: newRevenueData[startOfDay.getDate()], revenueLabels, paymentData: newPaymentData };
     }
 
     async getRevenueByWeek(today) {
@@ -203,7 +208,22 @@ class OrderService {
             is_deleted: false,
         };
         const groupBy = [sequelize.literal('EXTRACT(day FROM "order"."created_at")')];
-        return this.getRevenueChartData(where, groupBy);
+        const {revenueData: newRevenueData, paymentData: newPaymentData} = await this.getRevenueChartData(where, groupBy);
+        const revenueLabels =[];
+        const revenueData=[];
+        for (let i = 0; i < 7; i++) {
+            revenueLabels.push(moment(startOfWeek).add(i, 'days').format('dddd'));
+            const day = i+startOfWeek.getDate();
+            console.log('Day:', day);
+            if(newRevenueData[day]){
+                revenueData.push(newRevenueData[day]);
+            }
+            else{
+                revenueData.push(0);
+            }
+        }
+        return { revenueData, revenueLabels, paymentData: newPaymentData };
+
     }
 
     async getRevenueByMonth(today) {
@@ -218,7 +238,18 @@ class OrderService {
             is_deleted: false,
         };
         const groupBy = [sequelize.literal('EXTRACT(day FROM "order"."created_at")')];
-        return this.getRevenueChartData(where, groupBy);
+        const { revenueData: newRevenueData, paymentData: newPaymentData } = await this.getRevenueChartData(where, groupBy);
+        const revenueLabels = [];
+        const revenueData = [];
+        for (let i = 1; i <= moment(today).daysInMonth(); i++) {
+            revenueLabels.push(i);
+            if (newRevenueData[i]) {
+                revenueData.push(newRevenueData[i]);
+            } else {
+                revenueData.push(0);
+            }
+        }
+        return { revenueData, revenueLabels, paymentData: newPaymentData };
     }
 
     async getRevenueByYear(today) {
@@ -233,7 +264,17 @@ class OrderService {
             is_deleted: false,
         };
         const groupBy = [sequelize.literal('EXTRACT(month FROM "order"."created_at")')];
-        return this.getRevenueChartData(where, groupBy);
+        const { revenueData: newRevenueData, paymentData: newPaymentData } = await this.getRevenueChartData(where, groupBy);
+        const revenueLabels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        const revenueData = [];
+        for (let i = 1; i <= 12; i++) {
+            if (newRevenueData[i]) {
+                revenueData.push(newRevenueData[i]);
+            } else {
+                revenueData.push(0);
+            }
+        }
+        return { revenueData, revenueLabels, paymentData: newPaymentData };
     }
 
     async getRevenueChartData(where, groupBy) {
@@ -253,13 +294,13 @@ class OrderService {
                     attributes: []
                 }
             ],
-            group: groupBy
+            group: groupBy,
+            order: groupBy
         });
 
-        const revenueData = result.map(item => item.get('revenueData'));
         let vnPayData = 0;
         let cashData = 0;
-        let revenueLabels = [];
+        let revenueData = {};
 
         result.forEach(item => {
             if (item.get('vnPayData')) {
@@ -267,14 +308,11 @@ class OrderService {
             } else if (item.get('cashData')) {
                 cashData = DecimalUtil.add(cashData, item.get('cashData'));
             }
-            revenueLabels.push(item.get('label'));
+
+            revenueData[item.get('label')] = item.get('revenueData');
         });
 
-        console.log('Revenue data:', revenueData);
-        console.log('VNPay data:', vnPayData);
-        console.log('Cash data:', cashData);
-
-        return {revenueData, paymentData:[vnPayData, cashData], revenueLabels};
+        return {revenueData, paymentData:[vnPayData, cashData]};
     }
 }
 
