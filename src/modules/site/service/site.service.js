@@ -67,7 +67,22 @@ class SiteService{
         return {revenueData, paymentData, revenueLabels};
     }
 
-    
+    async getTopProductsByRevenue(timeRange) {
+        const today = new Date();
+        let productList = [];
+
+        if (timeRange === 'day') {
+            productList = await productService.getTopProductsByDay(today);
+        } else if (timeRange === 'week') {
+            productList = await productService.getTopProductsByWeek(today);
+        } else if (timeRange === 'month') {
+            productList = await productService.getTopProductsByMonth(today);
+        } else if (timeRange === 'year') {
+            productList = await productService.getTopProductsByYear(today);
+        }
+
+        return { productList };
+    }
 
 }
 

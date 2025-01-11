@@ -28,6 +28,20 @@ class SiteController {
             return res.status(500).json({ message: 'Internal server error' });
         }
     }
+
+    // [GET] /dashboard/top-products
+    async getTopProducts(req, res, next) {
+        try {
+            const { timeRange } = req.query;
+            const result = await siteService.getTopProductsByRevenue(timeRange);
+            console.log('get top products by revenue successfully');
+            console.log(result);
+            return res.json({ result });
+        } catch (error) {
+            console.error('Error fetching top products data:', error);
+            return res.status(500).json({ message: 'Internal server error' });
+        }
+    }
 }
 
 module.exports = new SiteController();
