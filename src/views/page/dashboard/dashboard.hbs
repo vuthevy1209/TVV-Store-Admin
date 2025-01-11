@@ -28,8 +28,7 @@
                             </div>
                             <div class="iq-progress-bar mt-2">
                                 <span class="bg-info iq-progress progress-1" data-percent="85"
-                                    style="transition: width 2s; width: 85%;">
-                                </span>
+                                    style="transition: width 2s; width: 85%;"></span>
                             </div>
                         </div>
                     </div>
@@ -48,8 +47,7 @@
                             </div>
                             <div class="iq-progress-bar mt-2">
                                 <span class="bg-danger iq-progress progress-1" data-percent="70"
-                                    style="transition: width 2s; width: 70%;">
-                                </span>
+                                    style="transition: width 2s; width: 70%;"></span>
                             </div>
                         </div>
                     </div>
@@ -68,8 +66,7 @@
                             </div>
                             <div class="iq-progress-bar mt-2">
                                 <span class="bg-success iq-progress progress-1" data-percent="75"
-                                    style="transition: width 2s; width: 75%;">
-                                </span>
+                                    style="transition: width 2s; width: 75%;"></span>
                             </div>
                         </div>
                     </div>
@@ -83,27 +80,26 @@
                         <div class="cardcol-lg-12">
                             <div class="card-stretch">
                                 <div class="card">
-                                    <div
-                                        class="card-body card-stretch d-flex justify-content-between align-items-center">
+                                    <div class="card-body card-stretch d-flex justify-content-between align-items-center">
                                         <h5 class="card-title mb-0">Revenue</h5>
                                         <div class="form-group d-flex justify-content-end mb-0">
                                             <button class="btn btn-primary me-2" id="dayButtonChart">Day</button>
                                             <button class="btn btn-primary me-2" id="weekButtonChart">Week</button>
                                             <button class="btn btn-primary me-2" id="monthButtonChart">Month</button>
                                             <button class="btn btn-primary me-2" id="yearButtonChart">Year</button>
+                                            <button class="btn btn-secondary" id="previewButton">Preview</button>
                                         </div>
                                     </div>
                                 </div>
                             </div>
-                            <div class="card-body d-flex ">
-                                <div class="col-lg-8 ">
+                            <div class="card-body d-flex">
+                                <div class="col-lg-8">
                                     <canvas id="revenueColumnChart" data-revenue="{{revenueData}}" data-labels="{{revenueLabels}}"></canvas>
                                 </div>
                                 <div class="col-lg-4">
                                     <canvas id="revenuePieChart" data-payment="{{paymentData}}"></canvas>
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 </div>
@@ -169,6 +165,39 @@
         </div>
     </div>
     <!-- Page end  -->
+</div>
+
+<!-- Preview Dialog -->
+<div id="previewDialog" class="modal" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Revenue Data Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Time Period</th>
+                                <th>Revenue ($)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="previewTableBody">
+                            <!-- Data will be inserted here by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Close
+                                        </button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

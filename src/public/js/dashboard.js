@@ -1,6 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const barCtx = document.getElementById('revenueColumnChart').getContext('2d');
     const pieCtx = document.getElementById('revenuePieChart').getContext('2d');
+    
 
     // Initialize charts with empty data
     const revenueColumnChart = new Chart(barCtx, {
@@ -94,6 +95,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
             revenuePieChart.data.datasets[0].data = newPaymentData;
             revenuePieChart.update();
+
+            // Update preview table data
+            const previewTableBody = document.getElementById('previewTableBody');
+            previewTableBody.innerHTML = ''; // Clear existing rows
+
+            newLabels.forEach((label, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${label}</td>
+                    <td>${newData[index]}</td>
+                `;
+                previewTableBody.appendChild(row);
+            });
         } catch (error) {
             hideLoading();
             showAlert('error', 'Error', 'Failed to fetch data');
@@ -180,6 +194,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     document.getElementById('yearButtonProduct').addEventListener('click', function () {
         updateTopProducts('year');
+    });
+
+    // Event listener for preview button
+    document.getElementById('previewButton').addEventListener('click', function () {
+        $('#previewDialog').modal('show');
+    });
+
+    // Event listener for close button in preview dialog
+    document.querySelector('#previewDialog .btn-close').addEventListener('click', function () {
+        $('#previewDialog').modal('hide');
     });
 
     // Initial chart update
