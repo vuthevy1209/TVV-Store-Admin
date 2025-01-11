@@ -1,19 +1,38 @@
 document.addEventListener('DOMContentLoaded', function () {
     const urlParams = new URLSearchParams(window.location.search);
     const orderStatus = urlParams.get('orderStatus');
+    const customerName = urlParams.get('customerName');
+    const orderId = urlParams.get('orderId');
+    const startDate = urlParams.get('startDate');
+    const endDate = urlParams.get('endDate');
+    const sort = urlParams.get('sort');
+
     const categorySelect = document.getElementById('category-select');
+    const customerNameInput = document.querySelector('input[name="customerName"]');
+    const orderIdInput = document.querySelector('input[name="orderId"]');
+    const startDateInput = document.getElementById('startDate');
+    const endDateInput = document.getElementById('endDate');
     const sortSelect = document.getElementById('sort-select');
 
     if (orderStatus && categorySelect) {
         categorySelect.value = orderStatus;
     }
-
-    if (sortSelect) {
-        const sort = urlParams.get('sort');
-        if (sort) {
-            sortSelect.value = sort;
-        }
+    if (customerName && customerNameInput) {
+        customerNameInput.value = customerName;
     }
+    if (orderId && orderIdInput) {
+        orderIdInput.value = orderId;
+    }
+    if (startDate && startDateInput) {
+        startDateInput.value = startDate;
+    }
+    if (endDate && endDateInput) {
+        endDateInput.value = endDate;
+    }
+    if (sort && sortSelect) {
+        sortSelect.value = sort;
+    }
+
     // Handle pagination clicks
     const paginationContainer = document.querySelector('.pagination');
     if (paginationContainer) {
