@@ -148,7 +148,8 @@ class ProductService {
                     as: 'order',
                     attributes: [],
                     where: {
-                        status: OrderStatusEnum.PAID.value,
+                        // status paid or completed
+                        [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }],
                         created_at: {
                             [Op.between]: [startDate, endDate]
                         }

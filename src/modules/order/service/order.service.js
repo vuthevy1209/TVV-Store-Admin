@@ -170,8 +170,8 @@ class OrderService {
                 [sequelize.fn('COUNT', sequelize.col('id')), 'totalOrder'],
                 [sequelize.fn('SUM', sequelize.col('subtotal')), 'totalRevenue']
             ],
-            where: [
-                { status: OrderStatusEnum.PAID.value },
+            where: [                
+                { [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }] },
                 { is_deleted: false }
             ],
         });
@@ -194,7 +194,7 @@ class OrderService {
                 [Op.gte]: startOfDay,
                 [Op.lte]: endOfDay
             },
-            status: OrderStatusEnum.PAID.value,
+            [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }],
             is_deleted: false,
         };
         const groupBy = [sequelize.literal('EXTRACT(day FROM "order"."created_at")')];
@@ -214,7 +214,7 @@ class OrderService {
                 [Op.gte]: startOfWeek,
                 [Op.lte]: endOfWeek
             },
-            status: OrderStatusEnum.PAID.value,
+            [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }],
             is_deleted: false,
         };
         const groupBy = [sequelize.literal('EXTRACT(day FROM "order"."created_at")')];
@@ -244,7 +244,7 @@ class OrderService {
                 [Op.gte]: startOfMonth,
                 [Op.lte]: endOfMonth
             },
-            status: OrderStatusEnum.PAID.value,
+            [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }],
             is_deleted: false,
         };
         const groupBy = [sequelize.literal('EXTRACT(day FROM "order"."created_at")')];
@@ -270,7 +270,7 @@ class OrderService {
                 [Op.gte]: startOfYear,
                 [Op.lte]: endOfYear
             },
-            status: OrderStatusEnum.PAID.value,
+            [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }],
             is_deleted: false,
         };
         const groupBy = [sequelize.literal('EXTRACT(month FROM "order"."created_at")')];
