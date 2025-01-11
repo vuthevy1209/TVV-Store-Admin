@@ -164,17 +164,26 @@ class OrderService {
     }
 
     async getTotalOrder() {
-        const result = await Order.findOne({
+        const result = await Order.findAll({
             attributes: [
                 [sequelize.fn('COUNT', sequelize.col('id')), 'totalOrder'],
                 [sequelize.fn('SUM', sequelize.col('subtotal')), 'totalRevenue']
             ],
-            where: { is_deleted: false },
-            group: ['id']
+            where: [
+                { status: OrderStatusEnum.PAID.value },
+                { is_deleted: false }
+            ],
         });
-        const { totalOrder, totalRevenue } = result.get({ plain: true });
-        return { totalOrder, totalRevenue };
+    
+        // Use `.get()` to extract the plain data
+        const data = result[0]?.get({ plain: true }) || { totalOrder: 0, totalRevenue: 0 };
+        
+        return {
+            totalOrder: data.totalOrder,
+            totalRevenue: data.totalRevenue
+        };
     }
+    
 
     async getRevenueByDay(today) {
         const startOfDay = moment(today).startOf('day').toDate();

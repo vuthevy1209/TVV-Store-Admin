@@ -2,12 +2,13 @@ const Product = require('../models/product');
 const Category = require('../models/category');
 const Brand = require('../models/brand');
 const { index } = require('../../../config/flexSearch');
-const { Op } = require('sequelize');
 const Order = require('../../order/model/order');
 const OrderItems = require('../../order/model/orderItems');
 const moment = require('moment');
-const sequelize = require('sequelize');
-const OrderStatusEnum = require('../../order/enum/order.enum');
+const {OrderStatusEnum} = require('../../order/enum/order.enum');
+
+const { sequelize } = require('../../../config/database');
+const { Op } = require('sequelize');
 
 class ProductService {
     // Get all products
@@ -129,45 +130,75 @@ class ProductService {
     }
 
     // Helper method to get top products by date range
-async getTopProductsByDateRange(startDate, endDate) {
-    const topProducts = await OrderItems.findAll({
-        attributes: [
-            'product_id',
-            [sequelize.fn('SUM', sequelize.col('quantity')), 'totalQuantity'],
-            [sequelize.fn('SUM', sequelize.literal('quantity * product_price')), 'totalRevenue'] // Calculated revenue
-        ],
-        include: [
-            {
-                model: Product,
-                as: 'product',
-                attributes: ['name', 'image_urls']
-            },
-            {
-                model: Order,
-                as: 'order',
-                attributes: [],
-                where: {
-                    status: OrderStatusEnum.COMPLETED.value, // Adjust according to your enum
-                    created_at: {
-                        [Op.between]: [startDate, endDate]
+    async getTopProductsByDateRange(startDate, endDate) {
+        const topProducts = await OrderItems.findAll({
+            attributes: [
+                'product_id',
+                [sequelize.fn('SUM', sequelize.col('quantity')), 'totalQuantity'], // Simple aggregation
+                [sequelize.literal('SUM(quantity * product_price)'), 'totalRevenue'] // Literal for complex expression
+            ],
+            include: [
+                {
+                    model: Product,
+                    as: 'product',
+                    attributes: ['name', 'image_urls']
+                },
+                {
+                    model: Order,
+                    as: 'order',
+                    attributes: [],
+                    where: {
+                        status: OrderStatusEnum.PAID.value,
+                        created_at: {
+                            [Op.between]: [startDate, endDate]
+                        }
                     }
                 }
-            }
-        ],
-        group: ['product_id', 'product.name', 'product.image_urls'],
-        order: [[sequelize.fn('SUM', sequelize.literal('quantity * product_price')), 'DESC']],
-        limit: 5
-    });
-
-    // Map the result to a simpler structure
-    return topProducts.map(item => ({
-        productId: item.product_id,
-        name: item.product.name,
-        image: item.product.image_urls ? item.product.image_urls[0] : null,
-        totalQuantity: item.get('totalQuantity'),
-        totalRevenue: item.get('totalRevenue')
-    }));
-}
+            ],
+            group: ['product.id', 'product_id','product.name', 'product.image_urls'],
+            order: [[sequelize.literal('SUM(quantity * product_price)'), 'DESC']], // Literal for ordering
+            limit: 5
+        });
+    
+        return topProducts.map(item => ({
+            productId: item.product_id,
+            name: item.product.name,
+            image: item.product.image_urls ? item.product.image_urls[0] : null,
+            totalQuantity: item.get('totalQuantity'),
+            totalRevenue: item.get('totalRevenue')
+        }));
+    }
+    
+    // async getTopProductsByDateRange(startDate, endDate) {
+    //     const topProducts = await OrderItems.findAll({
+    //         attributes: [
+    //             'product_id',
+    //             [sequelize.literal('SUM(quantity)'), 'totalQuantity'], // Using literal for sum
+    //             [sequelize.literal('SUM(quantity * product_price)'), 'totalRevenue'] // Full expression as literal
+    //         ],
+    //         include: [
+    //             {
+    //                 model: Product,
+    //                 as: 'product',
+    //                 attributes: ['name', 'image_urls']
+    //             },
+    //             {
+    //                 model: Order,
+    //                 as: 'order',
+    //                 attributes: [],
+    //                 where: {
+    //                     status: OrderStatusEnum.PAID.value,
+    //                     created_at: {
+    //                         [Op.between]: [startDate, endDate]
+    //                     }
+    //                 }
+    //             }
+    //         ],
+    //         group: ['product_id', 'product.name', 'product.image_urls'], // Non-aggregated columns must be grouped
+    //         order: [[sequelize.literal('SUM(quantity * product_price)'), 'DESC']], // Literal in order clause
+    //         limit: 5
+    //     });
+    // }    
 
 }
 

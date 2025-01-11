@@ -11,6 +11,8 @@ class SiteService{
     // total products
     async getInitialData(){
         let {totalOrder, totalRevenue} = await orderService.getTotalOrder();
+        console.log('Total order:', totalOrder);
+        console.log('Total revenue:', totalRevenue);
         totalRevenue = DecimalUtils.divide(totalRevenue, 1000); // Convert to thousand 
         const totalProduct = await productService.getTotalProducts();
 
