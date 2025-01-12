@@ -121,9 +121,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Handle delete button click event
     document.querySelectorAll('.button-delete-modal').forEach(button => {
-        button.addEventListener('click', async function () {
+        button.addEventListener('click', async (e) => {
+            e.preventDefault();
+            showLoading();
+
             // Get the product ID from data-id
-            const productId = this.getAttribute('data-id');
+            const productId = button.getAttribute('data-id');
             console.log("Product ID: ", productId);
 
             try {
@@ -137,13 +140,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 if (response.ok) {
                     const currentPage = document.querySelector('.pagination .active')?.querySelector('.page-link')?.dataset.page || 1;
+                    hideLoading();
                     showAlert('success', 'Success', 'Product deleted successfully!');
                     await loadProducts(currentPage);
                 } else {
                     const result = await response.json();
+                    hideLoading();
                     showAlert('error', 'Error', result.message || 'Failed to delete product');
                 }
             } catch (error) {
+                hideLoading();
                 console.error('Error:', error);
             }
         });

@@ -1,0 +1,73 @@
+.brand-list .card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.brand-list .card-img-top {
+    max-height: 150px;
+    object-fit: cover;
+    width: 100%;
+}
+
+.brand-list .card-body .card-text {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.brand-list .btn-group i {
+    padding: 8px;
+}
+
+.brand-list .btn-group i:hover {
+    background-color: #f1f1f1;
+    border-radius: 50%;
+}
+
+.btn-add-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card {
+    border: 1px solid #eaeaea;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+}
+
+.card-text {
+    text-align: center;
+    font-weight: bold;
+    color: #333;
+}
+
+#logo-preview {
+    object-fit: cover;
+    border: 2px dashed #ccc;
+}
+
+.modal .form-group label {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.modal .form-control {
+    border-radius: 8px;
+}
+
+.modal-footer button {
+    border-radius: 25px;
+}
+
+textarea {
+    border: 1px solid #ddd;
+    resize: none;
+}

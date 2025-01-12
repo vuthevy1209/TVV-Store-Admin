@@ -1,0 +1,138 @@
+<link rel="stylesheet" href="/css/BrandList.css">
+
+<div class="container p-4">
+    <!-- Add Brand Button -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-dark-emphasis">Brand List</h2>
+        <button class="btn btn-outline-dark btn-add-brand" data-bs-toggle="modal" data-bs-target="#add-brand-modal">
+            <i class="fa-solid fa-plus"></i>
+            Add Brand
+        </button>
+    </div>
+
+    <div class="row brand-list">
+        {{#each brandList}}
+            <div class="col-3" style="padding: 10px;" id="brand-{{this.id}}">
+                <div class="card h-100 d-flex flex-column">
+                    <img src="{{this.logo}}" class="card-img-top" alt="...">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <p class="card-text text-truncate" style="max-width: 100%;">{{this.name}}</p>
+                            <div class="btn-group">
+                                <div class="btn-group">
+                                    <i class="fa-solid fa-pen btn-edit-brand" data-id="{{this.id}}" data-bs-toggle="modal" data-bs-target="#EditModal-{{this.id}}"></i>
+                                    <i class="fa-solid fa-x btn-delete-brand" data-bs-toggle="modal" data-bs-target="#deleteModal-{{this.id}}"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Edit Brand Modal -->
+                <div class="modal fade" id="EditModal-{{this.id}}">
+                    <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5">Edit Brand</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form class="d-flex justify-content-center align-items-center">
+                                    <div class="row">
+                                        <div class="col-4 text-center d-flex flex-column justify-content-center align-items-center">
+                                            <div class="mb-3">
+                                                <img id="logo-preview-edit-{{this.id}}" src="{{this.logo}}" alt="Logo Preview"
+                                                     class="img-fluid rounded" style="max-height: 150px; width: auto;">
+                                            </div>
+                                            <button type="button" class="btn btn-outline-dark" onclick="document.getElementById('brand-logo-edit-{{this.id}}').click()">Add Logo</button>
+                                            <input type="file" class="form-control d-none" id="brand-logo-edit-{{this.id}}" name="logo" accept="image/*" onchange="previewLogoEdit(event, {{this.id}})">
+                                        </div>
+
+                                        <div class="col-8">
+                                            <div class="form-group">
+                                                <label for="brand-name-edit">Brand Name</label>
+                                                <input type="text" class="form-control" id="brand-name-{{this.id}}" name="name" placeholder="Enter brand name" value="{{this.name}}">
+                                            </div>
+                                            <div class="form-group mb-3">
+                                                <label for="description">Description</label>
+                                                <textarea class="form-control" id="description-edit-{{this.id}}" name="description" rows="3" placeholder="Enter description"  style="resize: none">{{this.desc}}</textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-dark button-edit-brand" data-bs-dismiss="modal" data-id="{{this.id}}">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal Delete -->
+                <div class="modal" id="deleteModal-{{this.id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete this brand?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    Close
+                                </button>
+                                <button type="button" class="btn btn-dark button-delete-modal" data-id="{{this.id}}" data-bs-dismiss="modal">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {{/each}}
+    </div>
+</div>
+
+<!-- Add Brand Modal -->
+<div class="modal fade" id="add-brand-modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5">New Brand</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="d-flex justify-content-center align-items-center">
+                    <div class="row">
+                        <div class="col-4 text-center d-flex flex-column justify-content-center align-items-center">
+                            <div class="mb-3">
+                                <img id="logo-preview" src="/images/image_placeholder.jpg" alt="Logo Preview"
+                                     class="img-fluid rounded" style="max-height: 150px; width: auto;">
+                            </div>
+                            <button type="button" class="btn btn-outline-dark" onclick="document.getElementById('brand-logo').click()">Add Logo</button>
+                            <input type="file" class="form-control d-none" id="brand-logo" name="logo" accept="image/*" onchange="previewLogo(event)">
+                        </div>
+                        <div class="col-8">
+                            <div class="form-group">
+                                <label for="brand-name">Brand Name</label>
+                                <input type="text" class="form-control" id="brand-name" name="name" placeholder="Enter brand name">
+                            </div>
+                            <div class="form-group mb-3">
+                                <label for="description">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="3" placeholder="Enter description"  style="resize: none"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" id="btn-save-brand">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/BrandList.js"></script>
+

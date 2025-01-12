@@ -1,14 +1,3 @@
-header {
-    position: fixed;
-    top: 0;
-    left: 260px;
-    width: calc(100% - 260px);
-    height: 60px;
-    background-color: white;
-    z-index: 998;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
 .profile img {
     width: 40px;
     height: 40px;
@@ -20,35 +9,28 @@ header {
     margin-right: 20px;
 }
 
-/* Dropdown container */
 #dropdownMenu {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Dropdown items */
 .dropdown-item {
     display: block;
     padding: 12px 15px;
     color: #333;
     text-decoration: none;
     font-size: 17px;
-    /*transition: all 0.0s ease;*/
 }
 
-/* Hover effects */
 .dropdown-item:hover {
     background-color: #f1f1f1;
     color: #007bff;
-    /*font-weight: 500;*/
 }
 
-/* Active or focused state */
 .dropdown-item:focus, .dropdown-item:active {
     background-color: #007bff;
     color: white;
 }
 
-/* Divider styles */
 .dropdown-divider {
     height: 1px;
     margin: 0.5rem 0;
@@ -60,21 +42,12 @@ header {
 }
 
 
-/* General Styles */
-/** {*/
-/*    margin: 0;*/
-/*    padding: 0;*/
-/*    box-sizing: border-box;*/
-/*    font-family: Arial, sans-serif;*/
-/*}*/
 #change-password-modal,
 #profile-modal {
     display: none;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    /*font-family: Arial, sans-serif;*/
-    /*background-color: #f4f4f4;*/
 }
 .change-password,
 .update-profile {
@@ -97,7 +70,6 @@ header {
     background-color: #d63b42;
 }
 
-/* Modal Styles */
 .modal {
     display: none;
     position: fixed;
@@ -118,6 +90,7 @@ header {
     max-width: 500px;
     padding: 20px;
     position: relative;
+    display: table;
 }
 
 .close-btn {
