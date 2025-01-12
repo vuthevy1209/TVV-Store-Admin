@@ -1,0 +1,183 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap');
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.add-list {
+    font-weight: 500;
+    padding: 0.6rem 1.5rem;
+    border-radius: 25px;
+}
+
+.table {
+    border-collapse: separate;
+    border-spacing: 0 10px;
+}
+
+
+.table thead th {
+    background-color: rgb(0, 0, 0);
+    color: #ffffff;
+    font-weight: 700;
+    border: none;
+    padding: 1rem;
+}
+
+.table thead th:first-child {
+    border-radius: 12px 0 0 0;
+}
+
+.table thead th:last-child {
+    border-radius: 0 12px 0 0;
+}
+
+.table tbody tr {
+    background-color: #ffffff;
+    transition: box-shadow 0.3s;
+}
+
+
+.table .checkbox-input {
+    transform: scale(1.2);
+    cursor: pointer;
+}
+
+.table td {
+    vertical-align: middle;
+    border-top: none;
+}
+
+.table img {
+    width: 50px;
+    height: auto;
+    border-radius: 5px;
+    object-fit: cover;
+}
+
+.list-action .button {
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-right: 5px;
+    padding: 0.5rem;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+
+.list-action .button:hover {
+    transform: scale(1.2);
+}
+
+.button-view {
+    background-color: #17a2b8;
+    color: #fff;
+}
+
+.button-edit {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.button-delete {
+    background-color: #ffc107;
+    color: #fff;
+}
+
+.pagination .page-link {
+    border-radius: 12px;
+    transition: background-color 0.3s, color 0.3s;
+    color: #000000;
+}
+
+.pagination .page-link:hover {
+    background-color: #000000;
+    color: #fff;
+}
+
+.pagination .page-link:focus {
+    box-shadow: none;
+}
+
+.pagination .active .page-link {
+    background-color: #000000;
+    color: #fff;
+    border: none;
+}
+
+.form-control:focus {
+    border-color: #000000;
+    box-shadow: none;
+}
+
+.form-select:focus {
+    border-color: #000000;
+    box-shadow: none;
+}
+
+.product-name {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #343a40;
+}
+
+.product-category {
+    background: #706f6f;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.4rem;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.product-brand {
+    background: #155b36;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.4rem;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.order-status-paid{
+    background: #0ce32c;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.4rem;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+
+.order-status-pending{
+    background: #e32c2c;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.4rem;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+
+.order-status-cancel{
+    background: #84a217;
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.4rem;
+    font-weight: 600;
+    font-size: 13px;
+}
+
+
+
