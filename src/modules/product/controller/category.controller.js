@@ -29,15 +29,15 @@ class CategoryController {
         try {
             const category = req.body;
             const id = category.id;
-            const response = await CategoryService.update(id, category);
-            res.json({ message: 'Category updated successfully', category: response });
+            const data = await CategoryService.update(id, category);
+            res.json({ message: 'Category updated successfully', data });
         } catch (error) {
             console.error('Error updating category:', error);
             next(error);
         }
     }
 
-    // [DELETE] /categories/delete
+    // [DELETE] /categories/:id
     async delete(req, res, next) {
         try {
             const { id } = req.params;
