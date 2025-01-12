@@ -5,7 +5,8 @@ class BrandController {
     async index(req, res, next) {
         try {
             const brandList = await BrandService.getAll();
-            res.json({ brandList });
+            console.log('Brand list:', brandList);
+            res.render('page/brand/BrandList', { brandList });
         } catch (error) {
             console.error('Error searching brands:', error);
             next(error);
@@ -29,15 +30,15 @@ class BrandController {
         try {
             const brand = req.body;
             const id = brand.id;
-            const response = await BrandService.update(id, brand);
-            res.json({ message: 'Brand updated successfully', brand: response });
+            const data = await BrandService.update(id, brand);
+            res.json({ message: 'Brand updated successfully', data });
         } catch (error) {
             console.error('Error updating brand:', error);
             next(error);
         }
     }
 
-    // [DELETE] /brands/delete
+    // [DELETE] /brands/:id
     async delete(req, res, next) {
         try {
             const { id } = req.params;

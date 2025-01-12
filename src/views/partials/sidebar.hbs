@@ -1,10 +1,12 @@
 <link rel="stylesheet" href="/css/sidebar.css">
 
-<div class="sidebar">
+<div class="sidebar" id="sidebar">
+    <div class="d-flex justify-content-center align-items-center">
+        <div class="logo" id="logo">
+            <img src="/images/logo.png" alt="TVV_Store">
+        </div>
 
-    <div class="logo d-flex justify-content-center align-items-center" id="logo">
-        <img src="/images/logo.png" alt="TVV_Store">
-        <span style="font-size: 1.5rem; font-weight: bold; color: #333; margin-left: 25px">
+        <span class="nav-button" style="font-size: 1.5rem; font-weight: bold; color: #333; margin-left: 25px">
             <i class="fa-solid fa-bars"></i>
         </span>
     </div>
@@ -19,11 +21,27 @@
             </a>
         </div>
         <div class="menu-item">
-            <a href="/products" class="nav-link d-flex align-items-center">
+            <div class="nav-link d-flex align-items-center toggle-submenu">
                 <i class="fa-solid fa-layer-group"></i>
                 <span class="m-2 title">Products</span>
-            </a>
+                <i class="fa-solid fa-angle-down"></i>
+            </div>
+            <div class="submenu">
+                <a href="/products" class="nav-link d-flex align-items-center">
+                    <i class="fa-solid fa-box"></i>
+                    <span class="m-2 title">All Products</span>
+                </a>
+                <a href="/categories" class="nav-link d-flex align-items-center">
+                    <i class="fa-solid fa-tags"></i>
+                    <span class="m-2 title">Category</span>
+                </a>
+                <a href="/brands" class="nav-link d-flex align-items-center">
+                    <i class="fa-solid fa-industry"></i>
+                    <span class="m-2 title">Brand</span>
+                </a>
+            </div>
         </div>
+
         <div class="menu-item">
             <a href="/orders" class="nav-link d-flex align-items-center">
                 <i class="fa-solid fa-truck-fast"></i>
@@ -43,6 +61,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const currentPath = window.location.pathname;
         const navLinks = document.querySelectorAll('.nav-link');
+
         navLinks.forEach(link => {
             if (link.getAttribute('href') === currentPath) {
                 link.classList.add('active');
@@ -50,10 +69,28 @@
                 link.classList.remove('active');
             }
         });
-    });
 
-    document.getElementById("logo").addEventListener("click", function() {
-        window.location.href = "/dashboard";
-    });
+        const toggleButtons = document.querySelectorAll('.toggle-submenu');
 
+        toggleButtons.forEach(button => {
+            const submenu = button.nextElementSibling;
+
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                if (submenu && submenu.classList.contains('submenu')) {
+                    submenu.classList.toggle('show');
+                }
+            });
+
+            if (submenu) {
+                const submenuLinks = submenu.querySelectorAll('.nav-link');
+                submenuLinks.forEach(link => {
+                    if (link.getAttribute('href') === currentPath) {
+                        submenu.classList.add('show');
+                        link.classList.add('active');
+                    }
+                });
+            }
+        });
+    });
 </script>

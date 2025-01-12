@@ -5,7 +5,7 @@ class CategoryController {
     async index(req, res, next) {
         try {
             const categoryList = await CategoryService.getAll();
-            res.json({ categoryList });
+            res.render('page/category/CategoryList', { categoryList });
         } catch (error) {
             console.error('Error searching categories:', error);
             next(error);
