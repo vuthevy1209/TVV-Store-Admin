@@ -1,60 +1,125 @@
 .sidebar {
-    background: white;
-    padding: 20px;
-    height: 100vh;
     width: 250px;
+    height: 100vh;
+    background: linear-gradient(135deg, #2c3e50, #34495e);
+    color: #ecf0f1;
     position: fixed;
-    z-index: 999;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease-in-out;
+    z-index: 1000;
 }
 
-.logo:hover {
-    cursor: pointer;
+.sidebar.ready {
+    transform: translateX(0);
 }
-
+.logo {
+    margin-top: 20px;
+}
 .logo img {
-    height: 25px;
+    width: 200px;
+    height: auto;
 }
 
-.nav-link:hover {
-    background: #f4f4f4;
-    color: #14142B;
-    border-radius: 12px;
-    transition: 0.6s;
+hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    margin: 10px 15px;
 }
 
 .menu {
-    height: calc(100vh - 180px);
+    flex: 1;
+    overflow-y: auto;
+}
+
+.menu-item {
+    margin: 0;
+    padding: 0;
 }
 
 .nav-link {
-    color: #6c757d;
-    padding-left: 10px;
-    border-radius: 12px;
-    margin-bottom: 8px;
-}
-
-.nav-link.active {
-    background: #f4f4f4;
-    color: black;
+    display: flex;
+    align-items: center;
+    color: #ecf0f1;
+    text-decoration: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin: 5px 15px;
+    transition: all 0.3s;
 }
 
 .nav-link i {
-    width: 24px;
-    margin-right: 12px;
+    font-size: 1.2rem;
+    margin-right: 10px;
 }
 
-.title {
-    font-weight: 500;
-    font-size: 20px;
+.nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
 }
 
+.nav-link.active {
+    background-color: #1abc9c;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+/* Submenu styling */
 .submenu {
     display: none;
     margin-left: 20px;
+    padding-left: 10px;
+    border-left: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .submenu.show {
     display: block;
 }
 
+.submenu .nav-link {
+    font-size: 0.9rem;
+    padding: 10px 15px;
+}
+
+#sidebar {
+    visibility: hidden;
+    opacity: 0;
+    /*transition: opacity 0.3s ease-in-out;*/
+}
+
+#sidebar.ready {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+
+.menu::-webkit-scrollbar {
+    width: 8px;
+}
+
+.menu::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 10px;
+}
+
+.menu::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.5);
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .nav-link {
+        font-size: 0.9rem;
+    }
+
+    .nav-button {
+        font-size: 1.2rem;
+    }
+}

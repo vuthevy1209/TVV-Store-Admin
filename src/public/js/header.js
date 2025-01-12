@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
     async function fetchUserData() {
         try {
-            const response = await fetch('/user/profile');
+            const response = await fetch('/users/profile');
             const userData = await response.json();
 
             if (response.ok) {
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         showLoading();
 
         try {
-            const response = await fetch('/user/update-profile', {
+            const response = await fetch('/users/update-profile', {
                 method: 'POST',
                 body: formData,
             });

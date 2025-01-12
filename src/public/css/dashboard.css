@@ -1,183 +1,132 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap');
-.btn-primary {
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 12px rgba(0, 0, 0, 0.2);
+}
+
+.card-body {
+    padding: 20px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: #343a40;
+}
+
+.iq-progress-bar {
+    background-color: #e9ecef;
+    height: 6px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 10px;
+}
+
+.iq-progress {
+    display: block;
+    height: 100%;
+    border-radius: 4px;
+}
+
+.bg-info {
+    background-color: #17a2b8;
+}
+
+.bg-danger {
+    background-color: #dc3545;
+}
+
+.bg-success {
+    background-color: #28a745;
+}
+
+/* Buttons */
+button.btn {
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    font-weight: bold;
+    border: none;
+    transition: background-color 0.3s ease;
+}
+
+button.btn-primary {
     background-color: #007bff;
-    border-color: #007bff;
-    transition: background-color 0.3s, transform 0.2s;
+    color: #fff;
 }
 
-.btn-primary:hover {
+button.btn-primary:hover {
     background-color: #0056b3;
-    transform: scale(1.05);
 }
 
-.add-list {
-    font-weight: 500;
-    padding: 0.6rem 1.5rem;
-    border-radius: 25px;
+button.btn-secondary {
+    background-color: #6c757d;
+    color: #fff;
 }
 
+button.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Table Styles */
 .table {
-    border-collapse: separate;
-    border-spacing: 0 10px;
+    width: 100%;
+    border-collapse: collapse;
 }
-
 
 .table thead th {
-    background-color: rgb(0, 0, 0);
+    background-color: #343a40;
     color: #ffffff;
-    font-weight: 700;
-    border: none;
-    padding: 1rem;
-}
-
-.table thead th:first-child {
-    border-radius: 12px 0 0 0;
-}
-
-.table thead th:last-child {
-    border-radius: 0 12px 0 0;
+    padding: 10px;
+    text-transform: uppercase;
 }
 
 .table tbody tr {
     background-color: #ffffff;
-    transition: box-shadow 0.3s;
+    transition: background-color 0.3s ease;
 }
 
-
-.table .checkbox-input {
-    transform: scale(1.2);
-    cursor: pointer;
+.table tbody tr:hover {
+    background-color: #f1f1f1;
 }
 
 .table td {
+    padding: 10px;
+    text-align: center;
     vertical-align: middle;
-    border-top: none;
 }
 
 .table img {
-    width: 50px;
-    height: auto;
+    max-width: 50px;
     border-radius: 5px;
-    object-fit: cover;
 }
 
-.list-action .button {
-    font-size: 0.8rem;
-    cursor: pointer;
-    transition: transform 0.2s;
-    margin-right: 5px;
-    padding: 0.5rem;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: none;
+/* Responsive Design */
+@media (max-width: 768px) {
+    .col-lg-4, .col-lg-8, .col-lg-12 {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+
+    .card-body {
+        padding: 15px;
+    }
+
+    .card-title {
+        font-size: 1rem;
+    }
 }
-
-.list-action .button:hover {
-    transform: scale(1.2);
-}
-
-.button-view {
-    background-color: #17a2b8;
-    color: #fff;
-}
-
-.button-edit {
-    background-color: #28a745;
-    color: #fff;
-}
-
-.button-delete {
-    background-color: #ffc107;
-    color: #fff;
-}
-
-.pagination .page-link {
-    border-radius: 12px;
-    transition: background-color 0.3s, color 0.3s;
-    color: #000000;
-}
-
-.pagination .page-link:hover {
-    background-color: #000000;
-    color: #fff;
-}
-
-.pagination .page-link:focus {
-    box-shadow: none;
-}
-
-.pagination .active .page-link {
-    background-color: #000000;
-    color: #fff;
-    border: none;
-}
-
-.form-control:focus {
-    border-color: #000000;
-    box-shadow: none;
-}
-
-.form-select:focus {
-    border-color: #000000;
-    box-shadow: none;
-}
-
-.product-name {
-    font-weight: 600;
-    font-size: 1.1rem;
-    color: #343a40;
-}
-
-.product-category {
-    background: #706f6f;
-    color: #fff;
-    border-radius: 12px;
-    padding: 0.4rem;
-    font-weight: 600;
-    font-size: 13px;
-}
-
-.product-brand {
-    background: #155b36;
-    color: #fff;
-    border-radius: 12px;
-    padding: 0.4rem;
-    font-weight: 600;
-    font-size: 13px;
-}
-
-.order-status-paid{
-    background: #0ce32c;
-    color: #fff;
-    border-radius: 12px;
-    padding: 0.4rem;
-    font-weight: 600;
-    font-size: 13px;
-}
-
-
-.order-status-pending{
-    background: #e32c2c;
-    color: #fff;
-    border-radius: 12px;
-    padding: 0.4rem;
-    font-weight: 600;
-    font-size: 13px;
-}
-
-
-.order-status-cancel{
-    background: #84a217;
-    color: #fff;
-    border-radius: 12px;
-    padding: 0.4rem;
-    font-weight: 600;
-    font-size: 13px;
-}
-
-
-
