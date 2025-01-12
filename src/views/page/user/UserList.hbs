@@ -1,0 +1,76 @@
+<link rel="stylesheet" href="/css/UserList.css">
+
+<div class="container p-4">
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="table-responsive rounded mb-3">
+                <table class="data-tables table mb-0 tbl-server-info">
+                    <thead class="text-uppercase text-center">
+                    <tr>
+                        <th></th>
+                        <th>Username</th>
+                        <th>Full Name</th>
+                        <th>Email</th>
+                        <th>Action</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {{#each userList}}
+                        <tr class="text-center">
+                            <td>
+                                <div class="checkbox d-inline-block">
+                                    <input type="checkbox" class="checkbox-input" id="checkbox2">
+                                    <label for="checkbox2" class="mb-0"></label>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img src="{{defaultVal this.avatar_url '/images/avatar_place_holder.jpg'}}" alt="image" class="avatar">                                    <div>
+                                    <div>
+                                        {{this.username}}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                {{this.first_name}} {{this.last_name}}
+                            </td>
+                            <td>
+                                {{this.email}}
+                            </td>
+                            <td>
+                                <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#deleteModal-{{this.id}}">
+                                    <i class="fa-solid fa-trash"></i> BAN
+                                </button>
+                            </td>
+                        </tr>
+
+                        <!-- Modal Delete -->
+                        <div class="modal" id="deleteModal-{{this.id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="deleteModalLabel">Confirm Ban</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p>Are you sure you want to ban this user?</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                            Close
+                                        </button>
+                                        <button type="button" class="btn btn-dark button-delete-modal" data-id="{{this.id}}" data-bs-dismiss="modal">
+                                            Ban
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {{/each}}
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/js/UserList.js"></script>

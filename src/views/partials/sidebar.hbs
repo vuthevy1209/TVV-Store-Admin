@@ -5,10 +5,6 @@
         <div class="logo" id="logo">
             <img src="/images/logo.png" alt="TVV_Store">
         </div>
-
-        <span class="nav-button" style="font-size: 1.5rem; font-weight: bold; color: #333; margin-left: 25px">
-            <i class="fa-solid fa-bars"></i>
-        </span>
     </div>
 
     <hr>
@@ -26,7 +22,7 @@
                 <span class="m-2 title">Products</span>
                 <i class="fa-solid fa-angle-down"></i>
             </div>
-            <div class="submenu">
+            <div class="submenu" id="products-submenu">
                 <a href="/products" class="nav-link d-flex align-items-center">
                     <i class="fa-solid fa-box"></i>
                     <span class="m-2 title">All Products</span>
@@ -49,19 +45,34 @@
             </a>
         </div>
         <div class="menu-item">
-            <a href="/customers" class="nav-link d-flex align-items-center">
-                <i class="fa-solid fa-users-line"></i>
-                <span class="m-2 title">Customers</span>
-            </a>
+            <div class="nav-link d-flex align-items-center toggle-submenu">
+                <i class="fa-solid fa-user"></i>
+                <span class="m-2 title">User</span>
+                <i class="fa-solid fa-angle-down"></i>
+            </div>
+            <div class="submenu" id="users-submenu">
+                <a href="/users" class="nav-link d-flex align-items-center">
+                    <i class="fa-solid fa-users-line"></i>
+                    <span class="m-2 title">All Users</span>
+                </a>
+                <a href="/users/blocked" class="nav-link d-flex align-items-center">
+                    <i class="fa-solid fa-user-lock"></i>
+                    <span class="m-2 title">Blocked Users</span>
+                </a>
+            </div>
         </div>
     </nav>
 </div>
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const sidebar = document.getElementById('sidebar');
         const currentPath = window.location.pathname;
         const navLinks = document.querySelectorAll('.nav-link');
+        const toggleButtons = document.querySelectorAll('.toggle-submenu');
+        const submenuStates = JSON.parse(localStorage.getItem('submenuStates')) || {};
 
+        // Highlight the current link
         navLinks.forEach(link => {
             if (link.getAttribute('href') === currentPath) {
                 link.classList.add('active');
@@ -70,27 +81,40 @@
             }
         });
 
-        const toggleButtons = document.querySelectorAll('.toggle-submenu');
-
+        // Restore submenu states
         toggleButtons.forEach(button => {
             const submenu = button.nextElementSibling;
 
-            button.addEventListener('click', function (e) {
-                e.preventDefault();
-                if (submenu && submenu.classList.contains('submenu')) {
-                    submenu.classList.toggle('show');
-                }
-            });
+            if (submenu && submenu.classList.contains('submenu')) {
+                const submenuId = submenu.getAttribute('id');
 
-            if (submenu) {
+                if (submenuStates[submenuId]) {
+                    submenu.classList.add('show');
+                }
+
+                button.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    submenu.classList.toggle('show');
+
+                    // Update state in localStorage
+                    submenuStates[submenuId] = submenu.classList.contains('show');
+                    localStorage.setItem('submenuStates', JSON.stringify(submenuStates));
+                });
+
+                // Check if the current page is within this submenu
                 const submenuLinks = submenu.querySelectorAll('.nav-link');
                 submenuLinks.forEach(link => {
                     if (link.getAttribute('href') === currentPath) {
                         submenu.classList.add('show');
                         link.classList.add('active');
+                        submenuStates[submenuId] = true;
+                        localStorage.setItem('submenuStates', JSON.stringify(submenuStates));
                     }
                 });
             }
         });
+
+        // Hiển thị sidebar sau khi JavaScript hoàn tất
+        sidebar.classList.add('ready');
     });
 </script>

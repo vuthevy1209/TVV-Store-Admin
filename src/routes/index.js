@@ -1,6 +1,5 @@
 const connectEnsureLogin = require('connect-ensure-login');
 
-
 const uploadImageRouter = require('./uploadImage.route');
 
 const siteRouter = require('../modules/site/route/site.route');
@@ -21,7 +20,7 @@ function route(app) {
     app.use('/orders', connectEnsureLogin.ensureLoggedIn({ setReturnTo: true, redirectTo: '/auth/login' }), orderRouter);
     app.use('/customers', connectEnsureLogin.ensureLoggedIn({ setReturnTo: true, redirectTo: '/auth/login' }), customerRouter);
     app.use('/cloudinary', connectEnsureLogin.ensureLoggedIn({ setReturnTo: true, redirectTo: '/auth/login' }), uploadImageRouter);
-    app.use('/user', userRouter);
+    app.use('/users', connectEnsureLogin.ensureLoggedIn({ setReturnTo: true, redirectTo: '/auth/login' }), userRouter);
 }
 
 module.exports = route;

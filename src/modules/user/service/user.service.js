@@ -167,6 +167,57 @@ class UserServices {
             return { error: error.message };
         }
     }
+
+    // get all users
+    async getAll() {
+        try {
+            const users = await User.findAll({
+                order: [
+                    ['created_at', 'DESC'],
+                    ['updated_at', 'DESC']
+                ],
+                where: {'status': true},
+            });
+            return users.map(user => user.get({plain: true}));
+        } catch (error) {
+            return {error: error.message};
+        }
+    }
+
+    // get blocked users
+    async getBlockedUsers() {
+        try {
+            const users = await User.findAll({
+                order: [
+                    ['created_at', 'DESC'],
+                    ['updated_at', 'DESC']
+                ],
+                where: {'status': false},
+            });
+            return users.map(user => user.get({plain: true}));
+        } catch (error) {
+            return {error: error.message};
+        }
+    }
+
+
+    // block user
+    async blockUser(userId) {
+        try {
+            await User.update({status: false}, {where: {id: userId}});
+        } catch (error) {
+            return {error: error.message};
+        }
+    }
+
+    // unblock user
+    async unblockUser(userId) {
+        try {
+            await User.update({status: true}, {where: {id: userId}});
+        } catch (error) {
+            return {error: error.message};
+        }
+    }
 }
 
 module.exports = new UserServices();
