@@ -114,10 +114,19 @@ app.use((req, res, next) => {
     next();
 });
 
+// Index products when the application starts
+const productService = require('./modules/product/service/product.service');
+productService.indexProducts().then(() => {
+    console.log('Products indexed successfully');
+}).catch(err => {
+    console.error('Error indexing products:', err);
+});
+
 
 require('./utils/node-cron.js');
 
 router(app);
+
 
 
 // catch 404 and forward to error handler

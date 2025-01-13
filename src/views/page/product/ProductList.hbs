@@ -5,39 +5,51 @@
         <div class="col-lg-12">
             <div class="d-flex flex-wrap flex-wrap align-items-center justify-content-between mb-4 row">
                 <div class="col-10">
-                    <div class="row">
-                        <div class="col-8">
-                            <div class="d-flex">
-                                <select class="form-select m-2" id="category-select">
+                    <form>
+                        <div class="d-flex align-items-center">
+                            <div>
+                                <label for="category-select" class="form-label">Category</label>
+                                <select class="form-select" id="category-select" name="category_id">
+                                    <option value="">Select category</option>
                                     {{#each categoryList}}
                                         <option value="{{this.id}}">{{this.name}}</option>
                                     {{/each}}
                                 </select>
-                                <select class="form-select m-2" id="brand-select">
+                                <label for="brand-select" class="form-label mt-2">Brand</label>
+                                <select class="form-select" id="brand-select" name="brand_id">
+                                    <option value="">Select brand</option>
                                     {{#each brandList}}
                                         <option value="{{this.id}}">{{this.name}}</option>
                                     {{/each}}
                                 </select>
-                                <!-- price min-->
-                                <input type="text" class="form-control m-2" placeholder="Price min"/>
-                                <!-- price max-->
-                                <input type="text" class="form-control m-2" placeholder="Price max"/>
                             </div>
+                            <div style="margin-left: 20px;">
+                                <label for="price-min" class="form-label">Price min</label>
+                                <input type="text" class="form-control" placeholder="Price min" name="price_min"/>
+                                <label for="price-max" class="form-label mt-2">Price max</label>
+                                <input type="text" class="form-control" placeholder="Price max" name="price_max"/>
+                            </div>
+                            <div style="margin-left: 20px;">
+                                <label for="sort" class="form-label">Sort by creation time</label>
+                                <select class="form-control" name="sort_by_creation" id="sort-select-creation">
+                                    <option value="DESC">Descending - Default</option>
+                                    <option value="ASC">Ascending</option>
+                                </select>
 
+                                <label for="sort" class="form-label mt-2">Sort by price</label>
+                                <select class="form-control" name="sort_by_price" id="sort-select-price">
+                                    <option value="DESC">Descending - Default</option>
+                                    <option value="ASC">Ascending</option>
+                                </select>
+                            </div>
+                            <div class="search d-flex align-items-center" style="margin-left: 20px;">
+                                <input type="text" class="form-control" placeholder="Search product" name="name" style="width: 300px"/>
+                                <button class="btn btn-dark search-button" type="submit">
+                                    <i class="fa-solid fa-search"></i>
+                                </button>
+                            </div>
                         </div>
-                        <div class="search col-4">
-                            <form action="#" method="get" class="m-2">
-                                <div class="input-group">
-                                    <input type="text" class="form-control" placeholder="Search product"/>
-                                    <div class="input-group-append">
-                                        <button class="btn btn-dark" type="submit">
-                                            <i class="fa-solid fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
+                    </form>
                 </div>
                 <div class="col-2 d-flex justify-content-end">
                     <a href="/products/create" class="btn btn-dark add-list">
@@ -64,70 +76,70 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {{#each productList}}
-                        <tr class="text-center">
-                            <td>
-                                <div class="checkbox d-inline-block">
-                                    <input type="checkbox" class="checkbox-input" id="checkbox2">
-                                    <label for="checkbox2" class="mb-0"></label>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <img src="{{this.image_urls.[0]}}" alt="image">
-                                    <div>
-                                        <div class="m-2">
-                                            <span class="product-name">{{this.name}}</span>
+                        {{#each productList}}
+                            <tr class="text-center">
+                                <td>
+                                    <div class="checkbox d-inline-block">
+                                        <input type="checkbox" class="checkbox-input" id="checkbox2">
+                                        <label for="checkbox2" class="mb-0"></label>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <img src="{{this.image_urls.[0]}}" alt="image">
+                                        <div>
+                                            <div class="m-2">
+                                                <span class="product-name">{{this.name}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="product-category">{{this.category.name}}</span>
+                                </td>
+                                <td>${{this.price}}</td>
+                                <td class="text-uppercase">
+                                    <span class="product-brand">{{this.brand.name}}</span>
+                                </td>
+                                <td>{{this.inventory_quantity}}</td>
+                                <td>
+                                    <div class="d-flex align-items-center justify-content-center list-action">
+                                        <div class="button button-view mr-2">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </div>
+                                        <a class="button button-edit mr-2" href="/products/edit/{{this.id}}" style="text-decoration: none;">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal-{{this.id}}">
+                                            <i class="fa-solid fa-x"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                                <!-- Modal Delete -->
+                                <div class="modal" id="deleteModal-{{this.id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>Are you sure you want to delete this product?</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="button" class="btn btn-dark button-delete-modal" data-id="{{this.id}}" data-bs-dismiss="modal">
+                                                    Delete
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </td>
-                            <td>
-                                <span class="product-category">{{this.category.name}}</span>
-                            </td>
-                            <td>${{this.price}}</td>
-                            <td class="text-uppercase">
-                                <span class="product-brand">{{this.brand.name}}</span>
-                            </td>
-                            <td>{{this.inventory_quantity}}</td>
-                            <td>
-                                <div class="d-flex align-items-center justify-content-center list-action">
-                                    <div class="button button-view mr-2">
-                                        <i class="fa-solid fa-eye"></i>
-                                    </div>
-                                    <a class="button button-edit mr-2" href="/products/edit/{{this.id}}" style="text-decoration: none;">
-                                        <i class="fa-solid fa-pen"></i>
-                                    </a>
-                                    <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal-{{this.id}}">
-                                        <i class="fa-solid fa-x"></i>
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
-
-                        <!-- Modal Delete -->
-                        <div class="modal" id="deleteModal-{{this.id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <p>Are you sure you want to delete this product?</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                            Close
-                                        </button>
-                                        <button type="button" class="btn btn-dark button-delete-modal" data-id="{{this.id}}" data-bs-dismiss="modal">
-                                            Delete
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    {{/each}}
+                            </tr>
+                        {{/each}}
+                    </tbody>
                 </table>
             </div>
         </div>
@@ -135,11 +147,21 @@
 
     <nav class="d-flex justify-content-center">
         <ul class="pagination">
+            {{#if (gt pagination.currentPage 1)}}
+                <li class="page-item">
+                    <button class="page-link" data-page="{{subtract pagination.currentPage 1}}">&laquo;</button>
+                </li>
+            {{/if}}
             {{#each pagination.pages}}
                 <li class="page-item {{#if this.active}}active{{/if}}">
                     <button class="page-link" data-page="{{this.number}}">{{this.number}}</button>
                 </li>
             {{/each}}
+            {{#if (lt pagination.currentPage pagination.totalPages)}}
+                <li class="page-item">
+                    <button class="page-link" data-page="{{add pagination.currentPage 1}}">&raquo;</button>
+                </li>
+            {{/if}}
         </ul>
     </nav>
 </div>

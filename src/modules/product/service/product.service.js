@@ -1,14 +1,14 @@
 const Product = require('../models/product');
 const Category = require('../models/category');
 const Brand = require('../models/brand');
-const { index } = require('../../../config/flexSearch');
 const Order = require('../../order/model/order');
 const OrderItems = require('../../order/model/orderItems');
 const moment = require('moment');
 const {OrderStatusEnum} = require('../../order/enum/order.enum');
+const index = require('../../../config/flexSearch');
 
-const { sequelize } = require('../../../config/database');
-const { Op } = require('sequelize');
+const {sequelize} = require('../../../config/database');
+const {Op} = require('sequelize');
 
 class ProductService {
     // Get all products
@@ -60,6 +60,82 @@ class ProductService {
 
         return {productList, pagination};
     }
+
+    // Get all products with pagination and criteria
+    async findProductsWithPaginationAndCriteria(page = 1, limit = 5, searchParams) {
+        page = parseInt(page);
+        limit = parseInt(limit);
+        const offset = (page - 1) * limit;
+        const where = {business_status: true};
+
+        if (searchParams.name) {
+            // Use FlexSearch to search for products by name or description
+            const flexSearchResults = index.search(searchParams.name);
+            const productIds = flexSearchResults.map(result => result.result).flat();
+            where.id = {[Op.in]: productIds};
+        }
+
+        if (searchParams.name) {
+            where.name = {[Op.like]: `%${searchParams.name.trim()}%`};
+        }
+
+        if (searchParams.category_id) {
+            where.category_id = parseInt(searchParams.category_id);
+        }
+
+        if (searchParams.brand_id) {
+            where.brand_id = parseInt(searchParams.brand_id);
+        }
+
+        if (searchParams.price_min && searchParams.price_max) {
+            where.price = {
+                [Op.between]: [parseFloat(searchParams.price_min), parseFloat(searchParams.price_max)],
+            };
+        } else if (searchParams.price_min) {
+            where.price = {
+                [Op.gte]: parseFloat(searchParams.price_min),
+            };
+        } else if (searchParams.price_max) {
+            where.price = {
+                [Op.lte]: parseFloat(searchParams.price_max),
+            };
+        }
+
+        const order = [];
+        if (searchParams.sort_by_creation) {
+            order.push(['created_at', searchParams.sort_by_creation]);
+        }
+
+        if (searchParams.sort_by_price) {
+            order.push(['price', searchParams.sort_by_price]);
+        }
+
+        const {rows: productList, count: totalProducts} = await Product.findAndCountAll({
+            where,
+            include: [
+                {model: Category, attributes: ['name']},
+                {model: Brand, attributes: ['name']}
+            ],
+            offset,
+            limit,
+            order
+        });
+
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        return {
+            productList,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                pages: Array.from({length: totalPages}, (v, k) => k + 1).map(number => ({
+                    number,
+                    active: number === page
+                }))
+            }
+        };
+    }
+
 
     // Create a new product
     async create(product) {
@@ -149,18 +225,18 @@ class ProductService {
                     attributes: [],
                     where: {
                         // status paid or completed
-                        [Op.or]: [{ status: OrderStatusEnum.PAID.value }, { status: OrderStatusEnum.COMPLETED.value }],
+                        [Op.or]: [{status: OrderStatusEnum.PAID.value}, {status: OrderStatusEnum.COMPLETED.value}],
                         created_at: {
                             [Op.between]: [startDate, endDate]
                         }
                     }
                 }
             ],
-            group: ['product.id', 'product_id','product.name', 'product.image_urls'],
+            group: ['product.id', 'product_id', 'product.name', 'product.image_urls'],
             order: [[sequelize.literal('SUM(quantity * product_price)'), 'DESC']], // Literal for ordering
             limit: 5
         });
-    
+
         return topProducts.map(item => ({
             productId: item.product_id,
             name: item.product.name,
@@ -169,37 +245,34 @@ class ProductService {
             totalRevenue: item.get('totalRevenue')
         }));
     }
-    
-    // async getTopProductsByDateRange(startDate, endDate) {
-    //     const topProducts = await OrderItems.findAll({
-    //         attributes: [
-    //             'product_id',
-    //             [sequelize.literal('SUM(quantity)'), 'totalQuantity'], // Using literal for sum
-    //             [sequelize.literal('SUM(quantity * product_price)'), 'totalRevenue'] // Full expression as literal
-    //         ],
-    //         include: [
-    //             {
-    //                 model: Product,
-    //                 as: 'product',
-    //                 attributes: ['name', 'image_urls']
-    //             },
-    //             {
-    //                 model: Order,
-    //                 as: 'order',
-    //                 attributes: [],
-    //                 where: {
-    //                     status: OrderStatusEnum.PAID.value,
-    //                     created_at: {
-    //                         [Op.between]: [startDate, endDate]
-    //                     }
-    //                 }
-    //             }
-    //         ],
-    //         group: ['product_id', 'product.name', 'product.image_urls'], // Non-aggregated columns must be grouped
-    //         order: [[sequelize.literal('SUM(quantity * product_price)'), 'DESC']], // Literal in order clause
-    //         limit: 5
-    //     });
-    // }    
+
+    async indexProducts() {
+        try {
+            const products = await Product.findAll();
+
+            // Map the products to match the indexed fields
+            const documents = products.map(product => {
+                const productData = product.get({plain: true});
+
+                return {
+                    id: productData.id, // Ensure the `id` field matches the one in the FlexSearch config
+                    name: productData.name,
+                    desc: productData.desc, // Include only fields that are indexed
+                };
+            });
+
+            documents.forEach(doc => {
+                index.add({
+                    id: doc.id,
+                    name: doc.name,
+                    desc: doc.desc,
+                });
+            });
+        } catch (error) {
+            console.error('Error indexing products:', error);
+            throw new Error(error.message);
+        }
+    }
 
 }
 

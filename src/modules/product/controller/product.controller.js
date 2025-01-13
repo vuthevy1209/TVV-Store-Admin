@@ -5,16 +5,10 @@ const categoryService = require('../service/category.service');
 class ProductController{
     // [GET] /products
     async index(req, res, next) {
+        const {category_id, brand_id, price_min, price_max, sort_by_creation, sort_by_price, name, page, limit} = req.query;
         try {
-            let {page = 1, limit = 10 } = req.query;
-            if (typeof page !== 'number' || typeof limit !== 'number') {
-                page = parseInt(page);
-                limit = parseInt(limit);
-            }
-
-            const { productList, pagination } = await productService.getProductsWithPagination({ page, limit });
-
-            console.log('pagination:', pagination);
+            const searchParams = {category_id, brand_id, price_min, price_max, sort_by_creation, sort_by_price, name};
+            const { productList, pagination } = await productService.findProductsWithPaginationAndCriteria(page, limit, searchParams);
 
             // fetch by AJAX
             if (req.headers.accept.includes('application/json')) {

@@ -1,4 +1,41 @@
 document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+
+    const categorySelect = document.getElementById("category-select");
+    if (categorySelect) {
+        categorySelect.value = params.get("category_id") || "";
+    }
+
+    const brandSelect = document.getElementById("brand-select");
+    if (brandSelect) {
+        brandSelect.value = params.get("brand_id") || "";
+    }
+
+    const priceMinInput = document.querySelector('input[name="price_min"]');
+    if (priceMinInput) {
+        priceMinInput.value = params.get("price_min") || "";
+    }
+
+    const priceMaxInput = document.querySelector('input[name="price_max"]');
+    if (priceMaxInput) {
+        priceMaxInput.value = params.get("price_max") || "";
+    }
+
+    const sortCreationSelect = document.getElementById("sort-select-creation");
+    if (sortCreationSelect) {
+        sortCreationSelect.value = params.get("sort_by_creation") || "DESC";
+    }
+
+    const sortPriceSelect = document.getElementById("sort-select-price");
+    if (sortPriceSelect) {
+        sortPriceSelect.value = params.get("sort_by_price") || "DESC";
+    }
+
+    const searchInput = document.querySelector('input[name="name"]');
+    if (searchInput) {
+        searchInput.value = params.get("name") || "";
+    }
+
     // Handle pagination clicks
     const paginationContainer = document.querySelector('.pagination');
     if (paginationContainer) {
@@ -7,30 +44,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 const page = e.target.dataset.page;
                 if (page) {
-                    await loadProducts(page);
+                    const queryParams = new URLSearchParams(window.location.search);
+                    queryParams.set('page', page);
+                    window.history.pushState({}, '', `/products?${queryParams.toString()}`);
+                    await loadProducts(queryParams);
                 }
             }
         });
     }
 
+    // Handle search form submission
+    const searchForm = document.querySelector('form');
+    if (searchForm) {
+        searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(searchForm);
+            const queryParams = new URLSearchParams(formData);
+            window.history.pushState({}, '', `/products?${queryParams.toString()}`);
+            await loadProducts(queryParams);
+        });
+    }
+
     // Function to load products
-    async function loadProducts(page, limit = 10) {
+    async function loadProducts(queryParams) {
         try {
-            const response = await fetch(`/products?page=${page}&limit=${limit}`, {
+            showLoading();
+            const response = await fetch(`/products?${queryParams.toString()}`, {
                 headers: {
-                    'Accept': 'application/json'
-                }
+                    'Accept': 'application/json',
+                },
+                method: 'GET',
             });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+            if (response.ok) {
+                const { productList, pagination } = await response.json();
+                hideLoading();
+                updateProductTable(productList);
+                updatePagination(pagination);
+            } else {
+                hideLoading();
+                showAlert('error', 'Error', 'Failed to load products');
             }
-
-            const data = await response.json();
-            updateProductTable(data.productList);
-            updatePagination(data.pagination);
         } catch (error) {
-            console.error('Error loading products:', error);
+            hideLoading();
+            console.error('Error:', error);
         }
     }
 
@@ -78,45 +134,58 @@ document.addEventListener('DOMContentLoaded', function() {
                         </button>
                     </div>
                 </td>
-            </tr>
-
-            <!-- Modal -->
-            <div class="modal" id="deleteModal-${product.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <p>Are you sure you want to delete this product?</p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                Close
-                            </button>
-                            <button type="button" class="btn btn-dark button-delete-modal" data-id="${product.id}">
-                                Delete
-                            </button>
+                <!-- Modal Delete -->
+                <div class="modal" id="deleteModal-${product.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to delete this product?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                    Close
+                                </button>
+                                <button type="button" class="btn btn-dark button-delete-modal" data-id="${product.id}" data-bs-dismiss="modal">
+                                    Delete
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </tr>
         `).join('');
     }
 
     // Function to update the pagination UI
     function updatePagination(pagination) {
-        const paginationElement = document.querySelector('.pagination');
-        if (!paginationElement) return;
+        const paginationContainer = document.querySelector('.pagination');
+        if (!paginationContainer) return;
 
-        paginationElement.innerHTML = `
-            ${pagination.pages.map(page => `
-                <li class="page-item ${page.active ? 'active' : ''}">
-                    <button class="page-link" data-page="${page.number}">${page.number}</button>
-                </li>
-            `).join('')}
-        `;
+        paginationContainer.innerHTML = ''; // Clear existing pagination
+        if (pagination.currentPage > 1) {
+            paginationContainer.insertAdjacentHTML(
+                'beforeend',
+                `<li class="page-item"><a class="page-link" href="#" data-page="${pagination.currentPage - 1}">&laquo;</a></li>`
+            );
+        }
+
+        pagination.pages.forEach(page => {
+            paginationContainer.insertAdjacentHTML(
+                'beforeend',
+                `<li class="page-item ${page.active ? 'active' : ''}"><a class="page-link" href="#" data-page="${page.number}">${page.number}</a></li>`
+            );
+        });
+
+        if (pagination.currentPage < pagination.totalPages) {
+            paginationContainer.insertAdjacentHTML(
+                'beforeend',
+                `<li class="page-item"><a class="page-link" href="#" data-page="${pagination.currentPage + 1}">&raquo;</a></li>`
+            );
+        }
     }
 
     // Handle delete button click event
@@ -142,7 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     const currentPage = document.querySelector('.pagination .active')?.querySelector('.page-link')?.dataset.page || 1;
                     hideLoading();
                     showAlert('success', 'Success', 'Product deleted successfully!');
-                    await loadProducts(currentPage);
+                    await loadProducts(new URLSearchParams(window.location.search));
                 } else {
                     const result = await response.json();
                     hideLoading();
