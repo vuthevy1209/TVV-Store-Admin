@@ -3,7 +3,8 @@ const User = require('../model/user');
 const Role = require('../model/role');
 const { sequelize } = require('../../../config/database'); // Adjust the path to your database configuration
 const cloudinary = require('../../../config/cloudinary');
-
+const { Op } = require('sequelize');
+const moment = require('moment');
 
 class UserServices {
     // find user by username
@@ -169,19 +170,48 @@ class UserServices {
     }
 
     // get all users
-    async getAll() {
-        try {
-            const users = await User.findAll({
-                order: [
-                    ['created_at', 'DESC'],
-                    ['updated_at', 'DESC']
-                ],
-                where: {'status': true},
-            });
-            return users.map(user => user.get({plain: true}));
-        } catch (error) {
-            return {error: error.message};
+    async getAll({ username, email, sort, page, currentUserId }) {
+        page = parseInt(page) || 1;
+        const query = {};
+        if (username) query.username = { [Op.iLike]: `%${username}%` };
+        if (email) query.email = { [Op.iLike]: `%${email}%` };
+
+        const sortOptions = [];
+        if (sort) {
+            const [field, order] = sort.split(':');
+            sortOptions.push([field, order.toUpperCase()]);
         }
+
+        const limit = 3;
+        const offset = (page - 1) * limit;
+
+        const { rows: users, count: total } = await User.findAndCountAll({
+            where: query,
+            include: [{ model: Role, as: 'role' }],
+            order: sortOptions,
+            limit,
+            offset,
+        });
+
+        const totalPages = Math.ceil(total / limit);
+
+        const formattedUsers = users.map(user => ({
+            ...user.get({ plain: true }),
+            formatted_created_at: moment(user.created_at).format('YYYY-MM-DD HH:mm:ss'),
+            isCurrentUser: user.id === currentUserId
+        }));
+
+        return {
+            data: formattedUsers,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                pages: Array.from({ length: totalPages }, (_, i) => ({
+                    number: i + 1,
+                    active: i + 1 === page
+                }))
+            }
+        };
     }
 
     // get blocked users
@@ -202,11 +232,14 @@ class UserServices {
 
 
     // block user
-    async blockUser(userId) {
+    async blockUser(userId, currentUserId) {
+        if (userId === currentUserId) {
+            throw new Error('Cannot ban your own account');
+        }
         try {
-            await User.update({status: false}, {where: {id: userId}});
+            await User.update({ status: false }, { where: { id: userId } });
         } catch (error) {
-            return {error: error.message};
+            return { error: error.message };
         }
     }
 

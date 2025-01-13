@@ -3,14 +3,47 @@
 <div class="container p-4">
     <div class="row">
         <div class="col-lg-12">
+            <form>
+                <div class="row">
+                    <div class="col-10">
+                        <div class="d-flex">
+                            <input type="text" class="form-control m-2" name="username" placeholder="Username" value="{{username}}" />
+                            <input type="text" class="form-control m-2" name="email" placeholder="Email" value="{{email}}" />
+                            <div class="input-group m-2">
+                                <button class="btn btn-dark" type="submit">
+                                    <i class="fa-solid fa-search"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <div class="table-responsive rounded mb-3">
                 <table class="data-tables table mb-0 tbl-server-info">
                     <thead class="text-uppercase text-center">
                     <tr>
                         <th></th>
-                        <th>Username</th>
-                        <th>Full Name</th>
-                        <th>Email</th>
+                        <th>
+                            Username
+                            <button class="sort-button" data-sort="username" data-order="asc">&#9650;</button>
+                            <button class="sort-button" data-sort="username" data-order="desc">&#9660;</button>
+                        </th>
+                        <th>
+                            Full Name
+                        </th>
+                        <th>
+                            Email
+                            <button class="sort-button" data-sort="email" data-order="asc">&#9650;</button>
+                            <button class="sort-button" data-sort="email" data-order="desc">&#9660;</button>
+                        </th>
+                        <th>
+                            Role
+                        </th>
+                        <th>
+                            Registration Time
+                            <button class="sort-button" data-sort="created_at" data-order="asc">&#9650;</button>
+                            <button class="sort-button" data-sort="created_at" data-order="desc">&#9660;</button>
+                        </th>
                         <th>Action</th>
                     </tr>
                     </thead>
@@ -25,7 +58,7 @@
                             </td>
                             <td>
                                 <div class="d-flex align-items-center">
-                                    <img src="{{defaultVal this.avatar_url '/images/avatar_place_holder.jpg'}}" alt="image" class="avatar">                                    <div>
+                                    <img src="{{defaultVal this.avatar_url '/images/avatar_place_holder.jpg'}}" alt="image" class="avatar">
                                     <div>
                                         {{this.username}}
                                     </div>
@@ -38,9 +71,17 @@
                                 {{this.email}}
                             </td>
                             <td>
+                                {{this.role.name}}
+                            </td>
+                            <td>
+                                {{this.formatted_created_at}}
+                            </td>
+                            <td>
+                                {{#unless this.isCurrentUser}}
                                 <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#deleteModal-{{this.id}}">
                                     <i class="fa-solid fa-trash"></i> BAN
                                 </button>
+                                {{/unless}}
                             </td>
                         </tr>
 
@@ -71,6 +112,26 @@
             </div>
         </div>
     </div>
+
+    <nav class="d-flex justify-content-center">
+        <ul class="pagination">
+            {{#if (gt pagination.currentPage 1)}}
+            <li class="page-item">
+                <button class="page-link" data-page="{{subtract pagination.currentPage 1}}">&laquo;</button>
+            </li>
+            {{/if}}
+            {{#each pagination.pages}}
+            <li class="page-item {{#if this.active}}active{{/if}}">
+                <button class="page-link" data-page="{{this.number}}">{{this.number}}</button>
+            </li>
+            {{/each}}
+            {{#if (lt pagination.currentPage pagination.totalPages)}}
+            <li class="page-item">
+                <button class="page-link" data-page="{{add pagination.currentPage 1}}">&raquo;</button>
+            </li>
+            {{/if}}
+        </ul>
+    </nav>
 </div>
 
 <script src="/js/UserList.js"></script>
