@@ -236,7 +236,7 @@ class UserServices {
             sortOptions.push([field, order.toUpperCase()]);
         }
 
-        const limit = 3;
+        const limit = 5;
         const offset = (page - 1) * limit;
 
         const { rows: users, count: total } = await User.findAndCountAll({
