@@ -90,6 +90,11 @@
 }
 
 .button-delete {
+    background-color: #ff0749;
+    color: #fff;
+}
+
+.button-unlock {
     background-color: #ffc107;
     color: #fff;
 }

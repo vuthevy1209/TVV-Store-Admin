@@ -63,10 +63,15 @@ class ProductService {
 
     // Get all products with pagination and criteria
     async findProductsWithPaginationAndCriteria(page = 1, limit = 5, searchParams) {
+
         page = parseInt(page);
         limit = parseInt(limit);
         const offset = (page - 1) * limit;
-        const where = {business_status: true};
+        const where = {};
+
+        if (searchParams.business_status !== null && searchParams.business_status !== undefined && searchParams.business_status !== '') {
+            where.business_status = searchParams.business_status === 'true';
+        }
 
         if (searchParams.name) {
             // Use FlexSearch to search for products by name or description
@@ -139,6 +144,10 @@ class ProductService {
 
     // Create a new product
     async create(product) {
+        indexProducts().then(() => {
+        }).catch(err => {
+            console.error('Error indexing products:', err);
+        });
         return Product.create(product);
     }
 
@@ -154,6 +163,15 @@ class ProductService {
         const product = await Product.findByPk(id);
         // update business_status to false
         product.business_status = false;
+
+        await product.save();
+    }
+
+    // unlock a product
+    async unlock(id) {
+        const product = await Product.findByPk(id);
+        // update business_status to true
+        product.business_status = true;
 
         await product.save();
     }

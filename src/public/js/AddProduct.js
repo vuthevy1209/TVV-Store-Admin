@@ -148,7 +148,11 @@ document.addEventListener('DOMContentLoaded', function() {
 
         for (let [key, value] of formData.entries()) {
             if (key !== 'image_urls') {
-                body[key] = value;
+                if (key === 'business_status') {
+                    body[key] = (value === 'true');
+                } else {
+                    body[key] = value;
+                }
             }
         }
 

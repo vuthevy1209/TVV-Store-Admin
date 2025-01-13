@@ -5,9 +5,9 @@ const categoryService = require('../service/category.service');
 class ProductController{
     // [GET] /products
     async index(req, res, next) {
-        const {category_id, brand_id, price_min, price_max, sort_by_creation, sort_by_price, name, page, limit} = req.query;
+        const {category_id, brand_id, price_min, price_max, sort_by_creation, sort_by_price, name, business_status, page, limit} = req.query;
         try {
-            const searchParams = {category_id, brand_id, price_min, price_max, sort_by_creation, sort_by_price, name};
+            const searchParams = {category_id, brand_id, price_min, price_max, sort_by_creation, sort_by_price, name, business_status};
             const { productList, pagination } = await productService.findProductsWithPaginationAndCriteria(page, limit, searchParams);
 
             // fetch by AJAX
@@ -82,7 +82,8 @@ class ProductController{
                 discount: product.discount ? parseFloat(product.discount) : null,
                 category_id: parseInt(product.category_id, 10),
                 brand_id: parseInt(product.brand_id, 10),
-                image_urls: product.image_urls || []
+                image_urls: product.image_urls || [],
+                business_status: product.business_status
             };
 
 
@@ -104,6 +105,18 @@ class ProductController{
             res.json({ message: 'Product deleted successfully' });
         } catch (error) {
             console.error('Error deleting product:', error);
+            next(error);
+        }
+    }
+
+    // [PATCH] /products/:id/unlock
+    async unlock(req, res, next) {
+        try {
+            const { id } = req.params;
+            await productService.unlock(id);
+            res.json({ message: 'Product unlocked successfully' });
+        } catch (error) {
+            console.error('Error unlocking product:', error);
             next(error);
         }
     }

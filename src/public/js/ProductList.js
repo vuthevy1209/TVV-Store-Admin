@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     const params = new URLSearchParams(window.location.search);
 
     const categorySelect = document.getElementById("category-select");
@@ -36,6 +36,12 @@ document.addEventListener('DOMContentLoaded', function() {
         searchInput.value = params.get("name") || "";
     }
 
+    const businessStatusSelect = document.getElementById("business-status-select");
+    if (businessStatusSelect) {
+        const status = params.get("business_status");
+        businessStatusSelect.value = status === 'true' ? 'true' : status === 'false' ? 'false' : "";
+    }
+
     // Handle pagination clicks
     const paginationContainer = document.querySelector('.pagination');
     if (paginationContainer) {
@@ -54,16 +60,17 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Handle search form submission
-    const searchForm = document.querySelector('form');
-    if (searchForm) {
-        searchForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const formData = new FormData(searchForm);
-            const queryParams = new URLSearchParams(formData);
-            window.history.pushState({}, '', `/products?${queryParams.toString()}`);
-            await loadProducts(queryParams);
-        });
-    }
+    // const searchForm = document.querySelector('form');
+    // if (searchForm) {
+    //     searchForm.addEventListener('submit', async (e) => {
+    //         e.preventDefault();
+    //         const formData = new FormData(searchForm);
+    //         console.log(formData);
+    //         const queryParams = new URLSearchParams(formData);
+    //         window.history.pushState({}, '', `/products?${queryParams.toString()}`);
+    //         await loadProducts(queryParams);
+    //     });
+    // }
 
     // Function to load products
     async function loadProducts(queryParams) {
@@ -76,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 method: 'GET',
             });
             if (response.ok) {
-                const { productList, pagination } = await response.json();
+                const {productList, pagination} = await response.json();
                 hideLoading();
                 updateProductTable(productList);
                 updatePagination(pagination);
@@ -96,68 +103,143 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!tbody) return;
 
         tbody.innerHTML = products.map(product => `
-            <tr class="text-center">
-                <td>
-                    <div class="checkbox d-inline-block">
-                        <input type="checkbox" class="checkbox-input" id="checkbox2">
-                        <label for="checkbox2" class="mb-0"></label>
-                    </div>
-                </td>
-                <td>
-                    <div class="d-flex align-items-center">
-                        <img src="${product.image_urls[0]}" alt="image">
-                        <div>
-                            <div class="m-2">
-                                <span class="product-name">${product.name}</span>
-                            </div>
-                        </div>
-                    </div>
-                </td>
-                <td>
-                    <span class="product-category">${product.category.name}</span>
-                </td>
-                <td>${product.price}</td>
-                <td class="text-uppercase">
-                    <span class="product-brand">${product.brand.name}</span>
-                </td>
-                <td>${product.inventory_quantity}</td>
-                <td>
-                    <div class="d-flex align-items-center justify-content-center list-action">
-                        <div class="button button-view mr-2">
-                            <i class="fa-solid fa-eye"></i>
-                        </div>
-                        <a class="button button-edit mr-2" href="/products/edit/${product.id}" style="text-decoration: none;">
-                            <i class="fa-solid fa-pen"></i>
-                        </a>
-                        <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal-${product.id}">
-                            <i class="fa-solid fa-x"></i>
-                        </button>
-                    </div>
-                </td>
-                <!-- Modal Delete -->
-                <div class="modal" id="deleteModal-${product.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <p>Are you sure you want to delete this product?</p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                    Close
-                                </button>
-                                <button type="button" class="btn btn-dark button-delete-modal" data-id="${product.id}" data-bs-dismiss="modal">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
+    <tr class="text-center">
+        <td>
+            <div class="d-flex align-items-center">
+                <img style="margin-left: 20px" src="${product.image_urls[0]}" alt="image">
+                <div style="margin-left: 40px">
+                    <div class="m-2">
+                        <span class="product-name">${product.name}</span>
                     </div>
                 </div>
-            </tr>
-        `).join('');
+            </div>
+        </td>
+        <td>
+            <span class="product-category">${product.category.name}</span>
+        </td>
+        <td>${product.price}</td>
+        <td class="text-uppercase">
+            <span class="product-brand">${product.brand.name}</span>
+        </td>
+        <td>${product.inventory_quantity}</td>
+        <td>
+            <div class="d-flex align-items-center justify-content-center list-action">
+                <a class="button button-edit mr-2" href="/products/edit/${product.id}" style="text-decoration: none;">
+                    <i class="fa-solid fa-pen"></i>
+                </a>
+                ${product.business_status ? `
+                    <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal-${product.id}">
+                        <i class="fa-solid fa-lock"></i>
+                    </button>
+                ` : `
+                    <button type="button" class="button button-unlock mr-2" data-bs-toggle="modal" data-bs-target="#unlockModal-${product.id}">
+                        <i class="fa-solid fa-unlock"></i>
+                    </button>
+                `}
+            </div>
+        </td>
+        <!-- Modal Delete -->
+        <div class="modal" id="deleteModal-${product.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteModalLabel">Confirm Suspend</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to suspend this product?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-dark button-delete-modal" data-id="${product.id}" data-bs-dismiss="modal">Suspend</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Unlock -->
+        <div class="modal" id="unlockModal-${product.id}" tabindex="-1" aria-labelledby="unlockModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="unlockModalLabel">Confirm Unlock</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to unlock this product?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-dark button-unlock-modal" data-id="${product.id}" data-bs-dismiss="modal">Unlock</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </tr>
+`).join('');
+
+//         tbody.innerHTML = products.map(product => `
+//             <tr class="text-center">
+//                 <td>
+// <!--                    <div class="checkbox d-inline-block">-->
+// <!--                        <input type="checkbox" class="checkbox-input" id="checkbox2">-->
+// <!--                        <label for="checkbox2" class="mb-0"></label>-->
+// <!--                    </div>-->
+//                 </td>
+//                 <td>
+//                     <div class="d-flex align-items-center">
+//                         <img src="${product.image_urls[0]}" alt="image">
+//                         <div>
+//                             <div class="m-2">
+//                                 <span class="product-name">${product.name}</span>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 </td>
+//                 <td>
+//                     <span class="product-category">${product.category.name}</span>
+//                 </td>
+//                 <td>${product.price}</td>
+//                 <td class="text-uppercase">
+//                     <span class="product-brand">${product.brand.name}</span>
+//                 </td>
+//                 <td>${product.inventory_quantity}</td>
+//                 <td>
+//                     <div class="d-flex align-items-center justify-content-center list-action">
+// <!--                        <div class="button button-view mr-2">-->
+// <!--                            <i class="fa-solid fa-eye"></i>-->
+// <!--                        </div>-->
+//                         <a class="button button-edit mr-2" href="/products/edit/${product.id}" style="text-decoration: none;">
+//                             <i class="fa-solid fa-pen"></i>
+//                         </a>
+//                         <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal-${product.id}">
+//                             <i class="fa-solid fa-lock"></i>
+//                         </button>
+//                     </div>
+//                 </td>
+//                 <!-- Modal Delete -->
+//                 <div class="modal" id="deleteModal-${product.id}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+//                     <div class="modal-dialog">
+//                         <div class="modal-content">
+//                             <div class="modal-header">
+//                                 <h5 class="modal-title" id="deleteModalLabel">Confirm Suspended</h5>
+//                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+//                             </div>
+//                             <div class="modal-body">
+//                                 <p>Are you sure you want to suspend this product?</p>
+//                             </div>
+//                             <div class="modal-footer">
+//                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+//                                     Close
+//                                 </button>
+//                                 <button type="button" class="btn btn-dark button-delete-modal" data-id="${product.id}" data-bs-dismiss="modal">
+//                                     Suspend
+//                                 </button>
+//                             </div>
+//                         </div>
+//                     </div>
+//                 </div>
+//             </tr>
+//         `).join('');
     }
 
     // Function to update the pagination UI
@@ -223,4 +305,41 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+
+    // Handle unlock button click event
+    document.querySelectorAll('.button-unlock-modal').forEach(button => {
+        button.addEventListener('click', async (e) => {
+            e.preventDefault();
+            showLoading();
+
+            // Get the product ID from data-id
+            const productId = button.getAttribute('data-id');
+            console.log("Product ID: ", productId);
+
+            try {
+                // Send PUT request to the server to unlock the product
+                const response = await fetch(`/products/${productId}/unlock`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (response.ok) {
+                    const currentPage = document.querySelector('.pagination .active')?.querySelector('.page-link')?.dataset.page || 1;
+                    hideLoading();
+                    showAlert('success', 'Success', 'Product unlocked successfully!');
+                    await loadProducts(new URLSearchParams(window.location.search));
+                } else {
+                    const result = await response.json();
+                    hideLoading();
+                    showAlert('error', 'Error', result.message || 'Failed to unlock product');
+                }
+            } catch (error) {
+                hideLoading();
+                console.error('Error:', error);
+            }
+        });
+    });
+
 });

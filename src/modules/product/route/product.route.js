@@ -17,4 +17,7 @@ router.put('/update', validateProductRules, handleValidationErrors, productContr
 // Delete a product
 router.delete('/:id', productController.delete);
 
+// Unlock a product
+router.patch('/:id/unlock', productController.unlock);
+
 module.exports = router;

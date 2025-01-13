@@ -41,18 +41,35 @@
                                     <option value="DESC">Descending - Default</option>
                                     <option value="ASC">Ascending</option>
                                 </select>
+
+
                             </div>
-                            <div class="search d-flex align-items-center" style="margin-left: 20px;">
-                                <input type="text" class="form-control" placeholder="Search product" name="name" style="width: 300px"/>
-                                <button class="btn btn-dark search-button" type="submit">
-                                    <i class="fa-solid fa-search"></i>
-                                </button>
+
+                            <div style="display: flex; flex-direction: column; margin-left: 20px">
+                                <label for="name" class="form-label">Search by name or description</label>
+                                <div id="name" class="search d-flex align-items-center">
+                                    <input type="text" class="form-control" placeholder="Search product" name="name"
+                                           style="width: 300px"/>
+                                    <button class="btn btn-dark search-button" type="submit">
+                                        <i class="fa-solid fa-search"></i>
+                                    </button>
+
+                                </div>
+
+                                <div style="max-width: 150px">
+                                    <label for="business-status-select" class="form-label mt-2">Status</label>
+                                    <select id="business-status-select" class="form-select" name="business_status">
+                                        <option value="" selected>All</option>
+                                        <option value="true">Active</option>
+                                        <option value="false">Suspended</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
                 <div class="col-2 d-flex justify-content-end">
-                    <a href="/products/create" class="btn btn-dark add-list">
+                    <a style="margin-right: 30px;" href="/products/create" class="btn btn-dark add-list">
                         <i class="fa-solid fa-plus"></i>
                         Add Product
                     </a>
@@ -65,80 +82,102 @@
             <div class="table-responsive rounded mb-3">
                 <table class="data-tables table mb-0 tbl-server-info">
                     <thead class="text-uppercase text-center">
-                        <tr>
-                            <th></th>
-                            <th>Product</th>
-                            <th>Category</th>
-                            <th>Price</th>
-                            <th>Brand Name</th>
-                            <th>Quantity</th>
-                            <th>Action</th>
-                        </tr>
+                    <tr>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Brand Name</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {{#each productList}}
-                            <tr class="text-center">
-                                <td>
-                                    <div class="checkbox d-inline-block">
-                                        <input type="checkbox" class="checkbox-input" id="checkbox2">
-                                        <label for="checkbox2" class="mb-0"></label>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="d-flex align-items-center">
-                                        <img src="{{this.image_urls.[0]}}" alt="image">
-                                        <div>
-                                            <div class="m-2">
-                                                <span class="product-name">{{this.name}}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td>
-                                    <span class="product-category">{{this.category.name}}</span>
-                                </td>
-                                <td>${{this.price}}</td>
-                                <td class="text-uppercase">
-                                    <span class="product-brand">{{this.brand.name}}</span>
-                                </td>
-                                <td>{{this.inventory_quantity}}</td>
-                                <td>
-                                    <div class="d-flex align-items-center justify-content-center list-action">
-                                        <div class="button button-view mr-2">
-                                            <i class="fa-solid fa-eye"></i>
-                                        </div>
-                                        <a class="button button-edit mr-2" href="/products/edit/{{this.id}}" style="text-decoration: none;">
-                                            <i class="fa-solid fa-pen"></i>
-                                        </a>
-                                        <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal-{{this.id}}">
-                                            <i class="fa-solid fa-x"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                                <!-- Modal Delete -->
-                                <div class="modal" id="deleteModal-{{this.id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                                    <div class="modal-dialog">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <h5 class="modal-title" id="deleteModalLabel">Confirm Delete</h5>
-                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p>Are you sure you want to delete this product?</p>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-                                                    Close
-                                                </button>
-                                                <button type="button" class="btn btn-dark button-delete-modal" data-id="{{this.id}}" data-bs-dismiss="modal">
-                                                    Delete
-                                                </button>
-                                            </div>
+                    {{#each productList}}
+                        <tr class="text-center">
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <img style="margin-left: 20px" src="{{this.image_urls.[0]}}" alt="image">
+                                    <div style="margin-left: 40px">
+                                        <div class="m-2">
+                                            <span class="product-name">{{this.name}}</span>
                                         </div>
                                     </div>
                                 </div>
-                            </tr>
-                        {{/each}}
+                            </td>
+                            <td>
+                                <span class="product-category">{{this.category.name}}</span>
+                            </td>
+                            <td>${{this.price}}</td>
+                            <td class="text-uppercase">
+                                <span class="product-brand">{{this.brand.name}}</span>
+                            </td>
+                            <td>{{this.inventory_quantity}}</td>
+                            <td>
+                                <div class="d-flex align-items-center justify-content-center list-action">
+                                    <!--                                        <div class="button button-view mr-2">-->
+                                    <!--                                            <i class="fa-solid fa-eye"></i>-->
+                                    <!--                                        </div>-->
+                                    <a class="button button-edit mr-2" href="/products/edit/{{this.id}}"
+                                       style="text-decoration: none;">
+                                        <i class="fa-solid fa-pen"></i>
+                                    </a>
+                                    {{#if this.business_status}}
+                                        <button type="button" class="button button-delete mr-2" data-bs-toggle="modal" data-bs-target="#deleteModal-{{this.id}}">
+                                            <i class="fa-solid fa-lock"></i>
+                                        </button>
+                                    {{else}}
+                                        <button type="button" class="button button-unlock mr-2" data-bs-toggle="modal" data-bs-target="#unlockModal-{{this.id}}">
+                                            <i class="fa-solid fa-unlock"></i>
+                                        </button>
+                                    {{/if}}
+                                </div>
+                            </td>
+                            <!-- Modal Delete -->
+                            <div class="modal" id="deleteModal-{{this.id}}" tabindex="-1"
+                                 aria-labelledby="deleteModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="deleteModalLabel">Confirm Suspend</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to suspend this product?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                Close
+                                            </button>
+                                            <button type="button" class="btn btn-dark button-delete-modal"
+                                                    data-id="{{this.id}}" data-bs-dismiss="modal">
+                                                Suspend
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Modal Unlock -->
+                            <div class="modal" id="unlockModal-{{this.id}}" tabindex="-1" aria-labelledby="unlockModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="unlockModalLabel">Confirm Unlock</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <p>Are you sure you want to unlock this product?</p>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            <button type="button" class="btn btn-dark button-unlock-modal" data-id="{{this.id}}" data-bs-dismiss="modal">Unlock</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </tr>
+                    {{/each}}
                     </tbody>
                 </table>
             </div>
