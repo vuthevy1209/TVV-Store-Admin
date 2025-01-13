@@ -36,29 +36,47 @@ class UserController {
             });
         } catch (error) {
             console.error('Error getting profile:', error);
-            res.status(500).json({ message: 'An error occurred while getting the profile' });
+            //res.status(500).json({ message: 'An error occurred while getting the profile' });
+            req.flash('error', 'An error occurred while getting the profile');
+            res.redirect('/page/error/error');
         }
     }
 
     // [GET] /users
     async getAllUser(req, res) {
         try {
-            const users = await userService.getAll();
-            res.render('page/user/UserList', { userList: users });
+            const { username, email, sort, page = 1 } = req.query;
+            const user = req.user;
+            const users = await userService.getAll({ username, email, sort, page, currentUserId: user.id });
+
+            if (req.headers.accept === 'application/json') {
+                return res.json({ users: users.data, pagination: users.pagination });
+            }
+
+            res.render('page/user/UserList', { userList: users.data, pagination: users.pagination });
         } catch (error) {
             console.error('Error getting all users:', error);
-            res.status(500).json({ message: 'An error occurred while getting all users' });
+            //res.status(500).json({ message: 'An error occurred while getting all users' });
+            req.flash('error', 'An error occurred while getting all users');
+            res.redirect('/page/error/error');
         }
     }
 
     // [GET] /users/blocked
     async getBlockedUsers(req, res) {
         try {
-            const users = await userService.getBlockedUsers();
-            res.render('page/user/BlockedUserList', { userList: users });
+            const { username, email, sort, page = 1 } = req.query;
+            const users = await userService.getBlockedUsers({ username, email, sort, page });
+
+            if (req.headers.accept === 'application/json') {
+                return res.json({ users: users.data, pagination: users.pagination });
+            }
+
+            res.render('page/user/BlockedUserList', { userList: users.data, pagination: users.pagination });
         } catch (error) {
             console.error('Error getting blocked users:', error);
-            res.status(500).json({ message: 'An error occurred while getting blocked users' });
+            req.flash('error', 'An error occurred while getting blocked users');
+            res.redirect('/page/error/error');
         }
     }
 
@@ -66,7 +84,7 @@ class UserController {
     async blockUser(req, res) {
         try {
             const { id } = req.params;
-            await userService.blockUser(id);
+            await userService.blockUser(id, req.user.id);
             res.status(200).json({ message: 'User blocked successfully' });
         } catch (error) {
             res.status(500).json({ message: 'An error occurred while blocking user' });
@@ -84,6 +102,5 @@ class UserController {
         }
     }
 }
-
 
 module.exports = new UserController();
