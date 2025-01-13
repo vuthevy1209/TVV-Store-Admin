@@ -172,7 +172,7 @@ class UserServices {
     // get all users
     async getAll({ username, email, sort, page, currentUserId }) {
         page = parseInt(page) || 1;
-        const query = {};
+        const query = { status: true };
         if (username) query.username = { [Op.iLike]: `%${username}%` };
         if (email) query.email = { [Op.iLike]: `%${email}%` };
 
@@ -182,7 +182,7 @@ class UserServices {
             sortOptions.push([field, order.toUpperCase()]);
         }
 
-        const limit = 3;
+        const limit = 5;
         const offset = (page - 1) * limit;
 
         const { rows: users, count: total } = await User.findAndCountAll({
@@ -215,21 +215,48 @@ class UserServices {
     }
 
     // get blocked users
-    async getBlockedUsers() {
-        try {
-            const users = await User.findAll({
-                order: [
-                    ['created_at', 'DESC'],
-                    ['updated_at', 'DESC']
-                ],
-                where: {'status': false},
-            });
-            return users.map(user => user.get({plain: true}));
-        } catch (error) {
-            return {error: error.message};
-        }
-    }
+    async getBlockedUsers({ username, email, sort, page }) {
+        page = parseInt(page) || 1;
+        const query = { status: false };
+        if (username) query.username = { [Op.iLike]: `%${username}%` };
+        if (email) query.email = { [Op.iLike]: `%${email}%` };
 
+        const sortOptions = [];
+        if (sort) {
+            const [field, order] = sort.split(':');
+            sortOptions.push([field, order.toUpperCase()]);
+        }
+
+        const limit = 3;
+        const offset = (page - 1) * limit;
+
+        const { rows: users, count: total } = await User.findAndCountAll({
+            where: query,
+            include: [{ model: Role, as: 'role' }],
+            order: sortOptions,
+            limit,
+            offset,
+        });
+
+        const totalPages = Math.ceil(total / limit);
+
+        const formattedUsers = users.map(user => ({
+            ...user.get({ plain: true }),
+            formatted_created_at: moment(user.created_at).format('YYYY-MM-DD HH:mm:ss')
+        }));
+
+        return {
+            data: formattedUsers,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                pages: Array.from({ length: totalPages }, (_, i) => ({
+                    number: i + 1,
+                    active: i + 1 === page
+                }))
+            }
+        };
+    }
 
     // block user
     async blockUser(userId, currentUserId) {

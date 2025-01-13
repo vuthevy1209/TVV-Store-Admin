@@ -19,9 +19,7 @@ class UserController {
             res.status(200).json({ message: 'Profile updated successfully', avatar_url: avatarUrl });
         } catch (error) {
             console.error('Error updating profile:', error);
-            //res.status(500).json({ message: 'An error occurred while updating the profile' });
-            req.flash('error', 'An error occurred while updating the profile');
-            res.redirect('/page/error/error');
+            res.status(500).json({ message: 'An error occurred while updating the profile' });
         }
     }
 
@@ -67,11 +65,16 @@ class UserController {
     // [GET] /users/blocked
     async getBlockedUsers(req, res) {
         try {
-            const users = await userService.getBlockedUsers();
-            res.render('page/user/BlockedUserList', { userList: users });
+            const { username, email, sort, page = 1 } = req.query;
+            const users = await userService.getBlockedUsers({ username, email, sort, page });
+
+            if (req.headers.accept === 'application/json') {
+                return res.json({ users: users.data, pagination: users.pagination });
+            }
+
+            res.render('page/user/BlockedUserList', { userList: users.data, pagination: users.pagination });
         } catch (error) {
             console.error('Error getting blocked users:', error);
-            //res.status(500).json({ message: 'An error occurred while getting blocked users' });
             req.flash('error', 'An error occurred while getting blocked users');
             res.redirect('/page/error/error');
         }
@@ -95,9 +98,7 @@ class UserController {
             await userService.unblockUser(id);
             res.status(200).json({ message: 'User unblocked successfully' });
         } catch (error) {
-            //res.status(500).json({ message: 'An error occurred while unblocking user' });
-            req.flash('error', 'An error occurred while unblocking user');
-            res.redirect('/page/error/error');
+            res.status(500).json({ message: 'An error occurred while unblocking user' });
         }
     }
 }

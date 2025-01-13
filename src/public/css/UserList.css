@@ -3,3 +3,32 @@
     height: 45px;
     border-radius: 50%;
 }
+
+.sort-button {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    line-height: 1; /* Removes extra height around icons */
+}
+
+.sort-buttons {
+    display: flex;
+    margin-left: 10px;
+    /* column*/
+    flex-direction: column;
+    justify-content: center;
+    gap: 0; /* Ensure no extra space between buttons */
+}
+
+.header-with-sort {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+th:not(.header-with-sort) {
+    vertical-align: middle;
+    padding-top: 10px; /* Adjust this value as needed */
+}
