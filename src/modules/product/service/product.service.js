@@ -61,6 +61,68 @@ class ProductService {
         return {productList, pagination};
     }
 
+    // Get all products with pagination and criteria
+    async findProductsWithPaginationAndCriteria(page = 1, limit = 5, searchParams) {
+        page = parseInt(page);
+        limit = parseInt(limit);
+        const offset = (page - 1) * limit;
+        const where = {business_status: true};
+
+        if(searchParams.name) {
+            where.name = {[Op.like]: `%${searchParams.name}%`};
+        }
+
+        if(searchParams.category_id) {
+            where.category_id = parseInt(searchParams.category_id);
+        }
+
+        if(searchParams.brand_id) {
+            where.brand_id = parseInt(searchParams.brand_id);
+        }
+
+        if (searchParams.price_min) {
+            where.price = {[Op.gte]: parseFloat(searchParams.price_min)};
+        }
+
+        if (searchParams.price_max) {
+            where.price = {[Op.lte]: parseFloat(searchParams.price_max)};
+        }
+
+        const order = [];
+        if (searchParams.sort_by_creation) {
+            order.push(['created_at', searchParams.sort_by_creation]);
+        }
+
+        if (searchParams.sort_by_price) {
+            order.push(['price', searchParams.sort_by_price]);
+        }
+
+        const {rows: productList, count: totalProducts} = await Product.findAndCountAll({
+            where,
+            include: [
+                {model: Category, attributes: ['name']},
+                {model: Brand, attributes: ['name']}
+            ],
+            offset,
+            limit,
+            order
+        });
+
+        const totalPages = Math.ceil(totalProducts / limit);
+
+        return {
+            productList,
+            pagination: {
+                currentPage: page,
+                totalPages,
+                pages: Array.from({ length: totalPages }, (v, k) => k + 1).map(number => ({
+                    number,
+                    active: number === page
+                }))
+            }
+        }
+    }
+
     // Create a new product
     async create(product) {
         return Product.create(product);
