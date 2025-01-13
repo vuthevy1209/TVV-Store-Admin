@@ -114,12 +114,20 @@
                             <td>
                                 {{this.formatted_created_at}}
                             </td>
-                            <td>
+                            <td class="d-flex">
+                                <button class="btn btn-success mr-2">
+                                    <a href="/users/{{this.id}}" style="color: white;"> 
+                                        <div class="button button-view ">
+                                            <i class="fa-solid fa-eye p-2"></i><span>View</span>
+                                        </div>
+                                    </a>
+                                </button>
                                 {{#unless this.isCurrentUser}}
                                 <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#deleteModal-{{this.id}}">
                                     <i class="fa-solid fa-trash"></i> BAN
                                 </button>
                                 {{/unless}}
+                                
                             </td>
                         </tr>
 
