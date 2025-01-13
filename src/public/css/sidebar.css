@@ -67,16 +67,18 @@ hr {
     font-weight: bold;
 }
 
-/* Submenu styling */
+/* Submenu hidden state */
 .submenu {
-    display: none;
+    max-height: 0;
+    overflow: hidden;
     margin-left: 20px;
     padding-left: 10px;
     border-left: 2px solid rgba(255, 255, 255, 0.2);
+    transition: max-height 0.2s ease-out;
 }
 
 .submenu.show {
-    display: block;
+    max-height: 300px;
 }
 
 .submenu .nav-link {
@@ -87,14 +89,12 @@ hr {
 #sidebar {
     visibility: hidden;
     opacity: 0;
-    /*transition: opacity 0.3s ease-in-out;*/
 }
 
 #sidebar.ready {
     visibility: visible;
     opacity: 1;
 }
-
 
 
 .menu::-webkit-scrollbar {
