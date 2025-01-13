@@ -64,7 +64,16 @@ class UserServices {
     // find user by id
     async findById(id) {
         try {
-            return await User.findByPk(id);
+            const user = await User.findByPk(id, {
+                include: [{ model: Role, as: 'role' }]
+            });
+            if (!user) {
+                throw new Error('User not found');
+            }
+            return {
+                ...user.get({ plain: true }),
+                formatted_created_at: moment(user.created_at).format('YYYY-MM-DD HH:mm:ss')
+            };
         } catch (error) {
             throw new Error(error.message);
         }

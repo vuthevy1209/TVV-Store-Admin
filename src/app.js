@@ -130,8 +130,8 @@ router(app);
 
 
 // catch 404 and forward to error handler
-app.use(function (req, res, next) {
-    next(createError(404));
+app.use((req, res) => {
+    res.status(404).render('page/error/404', {title: 'Page Not Found'});
 });
 
 // error handler
@@ -144,5 +144,7 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.render('page/error/error');
 });
+
+
 
 module.exports = app;

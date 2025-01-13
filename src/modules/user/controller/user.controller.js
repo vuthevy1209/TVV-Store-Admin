@@ -80,6 +80,24 @@ class UserController {
         }
     }
 
+    // [GET] /users/:id
+    async getUserDetail(req, res) {
+        try {
+            const { id } = req.params;
+            const user = await userService.findById(id);
+            if (!user) {
+                req.flash('error', 'User not found');
+                return res.redirect('/users');
+            }
+
+            res.render('page/user/UserDetail', { user });
+        } catch (error) {
+            console.error('Error getting user detail:', error);
+            req.flash('error', 'An error occurred while getting user detail');
+            res.redirect('/page/error/error');
+        }
+    }
+
     // [POST] /users/block/:id
     async blockUser(req, res) {
         try {

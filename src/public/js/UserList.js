@@ -115,7 +115,14 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>
                         ${user.formatted_created_at}
                     </td>
-                    <td>
+                    <td class="d-flex">
+                        <button class="btn btn-success mr-2">
+                            <a href="/users/${user.id}" style="color: white;"> 
+                                <div class="button button-view">
+                                    <i class="fa-solid fa-eye p-2"></i><span>View</span>
+                                </div>
+                            </a>
+                        </button>
                         ${user.isCurrentUser ? '' : `
                         <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#deleteModal-${user.id}">
                             <i class="fa-solid fa-trash"></i> BAN
