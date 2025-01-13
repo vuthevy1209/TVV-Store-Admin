@@ -270,8 +270,11 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     }
 
+    const deleteButtons =  document.querySelectorAll('.button-delete-modal');
+    console.log(deleteButtons);
+
     // Handle delete button click event
-    document.querySelectorAll('.button-delete-modal').forEach(button => {
+    deleteButtons.forEach(button => {
         button.addEventListener('click', async (e) => {
             e.preventDefault();
             showLoading();
@@ -292,7 +295,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (response.ok) {
                     const currentPage = document.querySelector('.pagination .active')?.querySelector('.page-link')?.dataset.page || 1;
                     hideLoading();
-                    showAlert('success', 'Success', 'Product deleted successfully!');
+                    showAlert('success', 'Success', 'Product suspended successfully!');
                     await loadProducts(new URLSearchParams(window.location.search));
                 } else {
                     const result = await response.json();
@@ -306,8 +309,11 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    const unlockButtons =  document.querySelectorAll('.button-unlock-modal');
+    console.log(unlockButtons);
+
     // Handle unlock button click event
-    document.querySelectorAll('.button-unlock-modal').forEach(button => {
+    unlockButtons.forEach(button => {
         button.addEventListener('click', async (e) => {
             e.preventDefault();
             showLoading();
@@ -328,7 +334,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 if (response.ok) {
                     const currentPage = document.querySelector('.pagination .active')?.querySelector('.page-link')?.dataset.page || 1;
                     hideLoading();
-                    showAlert('success', 'Success', 'Product unlocked successfully!');
+                    showAlert('success', 'Success', 'Product unsuspended successfully!');
                     await loadProducts(new URLSearchParams(window.location.search));
                 } else {
                     const result = await response.json();
