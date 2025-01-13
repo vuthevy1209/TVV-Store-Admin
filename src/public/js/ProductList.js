@@ -1,50 +1,40 @@
 document.addEventListener('DOMContentLoaded', function() {
-    const urlParams = new URLSearchParams(window.location.search);
-    // category_id, brand_id, price_min, price_max, sort_by_creation, sort_by_price, name, page, limit
-    const category = urlParams.get('category_id');
-    const brand = urlParams.get('brand_id');
-    const priceMin = urlParams.get('price_min');
-    const priceMax = urlParams.get('price_max');
-    const sortCreation = urlParams.get('sort_by_creation');
-    const sortPrice = urlParams.get('sort_by_price');
-    const name = urlParams.get('name');
+    const params = new URLSearchParams(window.location.search);
 
-    const categorySelect = document.getElementById('category-select');
-    const brandSelect = document.getElementById('brand-select');
+    const categorySelect = document.getElementById("category-select");
+    if (categorySelect) {
+        categorySelect.value = params.get("category_id") || "";
+    }
+
+    const brandSelect = document.getElementById("brand-select");
+    if (brandSelect) {
+        brandSelect.value = params.get("brand_id") || "";
+    }
+
     const priceMinInput = document.querySelector('input[name="price_min"]');
+    if (priceMinInput) {
+        priceMinInput.value = params.get("price_min") || "";
+    }
+
     const priceMaxInput = document.querySelector('input[name="price_max"]');
-    const sortCreationSelect = document.getElementById('sort-by-creation');
-    const sortPriceSelect = document.getElementById('sort-by-price');
-    const nameInput = document.querySelector('input[name="name"]');
-
-    if (category && categorySelect) {
-        categorySelect.value = category;
+    if (priceMaxInput) {
+        priceMaxInput.value = params.get("price_max") || "";
     }
 
-    if (brand && brandSelect) {
-        brandSelect.value = brand;
+    const sortCreationSelect = document.getElementById("sort-select-creation");
+    if (sortCreationSelect) {
+        sortCreationSelect.value = params.get("sort_by_creation") || "DESC";
     }
 
-    if (priceMin && priceMinInput) {
-        priceMinInput.value = priceMin;
+    const sortPriceSelect = document.getElementById("sort-select-price");
+    if (sortPriceSelect) {
+        sortPriceSelect.value = params.get("sort_by_price") || "DESC";
     }
 
-    if (priceMax && priceMaxInput) {
-        priceMaxInput.value = priceMax;
+    const searchInput = document.querySelector('input[name="name"]');
+    if (searchInput) {
+        searchInput.value = params.get("name") || "";
     }
-
-    if (sortCreation && sortCreationSelect) {
-        sortCreationSelect.value = sortCreation;
-    }
-
-    if (sortPrice && sortPriceSelect) {
-        sortPriceSelect.value = sortPrice;
-    }
-
-    if (name && nameInput) {
-        nameInput.value = name;
-    }
-
 
     // Handle pagination clicks
     const paginationContainer = document.querySelector('.pagination');
