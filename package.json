@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "dev": "nodemon ./bin/www"
+    "dev": "nodemon ./bin/www",
+    "test": "jest"
   },
   "dependencies": {
     "@sequelize/core": "^7.0.0-alpha.43",
@@ -40,6 +41,7 @@
     "sequelize": "^6.37.5"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "nodemon": "^3.1.9"
   }
 }
