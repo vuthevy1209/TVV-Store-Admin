@@ -134,6 +134,7 @@ saveBtn.addEventListener('click', async (e) => {
     }
 });
 
+// Update the UI with the edited brand
 const updateUIwithEditBrand = (brand) => {
     const brandCard = document.getElementById(`brand-${brand.id}`);
     if (!brandCard) {
@@ -143,6 +144,15 @@ const updateUIwithEditBrand = (brand) => {
 
     brandCard.querySelector('.card-img-top').src = brand.logo;
     brandCard.querySelector('.card-text').textContent = brand.name;
+
+    // Update the edit modal fields
+    const brandNameInput = document.querySelector(`#brand-name-${brand.id}`);
+    const descriptionInput = document.querySelector(`#description-edit-${brand.id}`);
+    const logoPreview = document.querySelector(`#logo-preview-edit-${brand.id}`);
+
+    brandNameInput.value = brand.name;
+    descriptionInput.value = brand.desc;
+    logoPreview.src = brand.logo;
 };
 
 // edit brand
@@ -198,7 +208,7 @@ document.querySelectorAll('.button-edit-brand').forEach(button => {
             return;
         }
 
-        // hide modal
+        // Hide modal
         const editBrandModal = document.getElementById(`EditModal-${brandId}`);
         const bootstrapModal = bootstrap.Modal.getInstance(editBrandModal);
         bootstrapModal.hide();
@@ -232,12 +242,11 @@ document.querySelectorAll('.button-edit-brand').forEach(button => {
                 hideLoading();
             }
         } catch (error) {
-            console.error('Error:', error);
+            showAlert('error', 'Error', 'Failed to update brand');
             hideLoading();
         }
     });
 });
-
 // delete brand
 document.querySelectorAll('.button-delete-modal').forEach(button => {
     button.addEventListener('click', async (e) => {
