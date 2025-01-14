@@ -114,17 +114,21 @@
                             <td>
                                 {{this.formatted_created_at}}
                             </td>
-                            <td class="d-flex">
-                                <button class="btn btn-success mr-2">
-                                    <a href="/users/{{this.id}}" style="color: white;"> 
-                                        <div class="button button-view">
-                                            <i class="fa-solid fa-eye p-2"></i><span>View</span>
-                                        </div>
+                            <td>
+                                <div class="d-flex">
+                                    <a href="/users/{{this.id}}" style="color: white; text-decoration: none">
+                                        <button class="btn button-view">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </button>
                                     </a>
-                                </button>
-                                <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#unblockModal-{{this.id}}">
-                                    <i class="fa-solid fa-trash"></i> UNBAN
-                                </button>
+
+                                    {{#unless this.isCurrentUser}}
+                                        <button class="btn btn-dark button-unban" data-bs-toggle="modal" data-bs-target="#unblockModal-{{this.id}}">
+                                            <i class="fa-solid fa-unlock"></i>
+                                        </button>
+                                    {{/unless}}
+
+                                </div>
                             </td>
                         </tr>
 

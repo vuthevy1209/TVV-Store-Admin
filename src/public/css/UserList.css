@@ -32,3 +32,44 @@ th:not(.header-with-sort) {
     vertical-align: middle;
     padding-top: 10px; /* Adjust this value as needed */
 }
+
+.button-unban,
+.button-ban,
+.button-view {
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: transform 0.2s;
+    margin-right: 5px;
+    padding: 0.5rem;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+}
+
+.button-view {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.button-ban {
+    background-color: #ff0749;
+    color: #fff;
+}
+
+.button-unban {
+    background-color: #ffc107;
+    color: #fff;
+}
+
+.table td {
+    vertical-align: middle;
+    border-top: none;
+}
+
+.list-action .button:hover {
+    transform: scale(1.2);
+}
