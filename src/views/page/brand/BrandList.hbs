@@ -43,7 +43,7 @@
                                                 <img id="logo-preview-edit-{{this.id}}" src="{{this.logo}}" alt="Logo Preview"
                                                      class="img-fluid rounded" style="max-height: 150px; width: auto;">
                                             </div>
-                                            <button type="button" class="btn btn-outline-dark" onclick="document.getElementById('brand-logo-edit-{{this.id}}').click()">Add Logo</button>
+                                            <button type="button" class="btn btn-outline-dark" onclick="document.getElementById('brand-logo-edit-{{this.id}}').click()">Change</button>
                                             <input type="file" class="form-control d-none" id="brand-logo-edit-{{this.id}}" name="logo" accept="image/*" onchange="previewLogoEdit(event, {{this.id}})">
                                         </div>
 
@@ -62,7 +62,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-dark button-edit-brand" data-bs-dismiss="modal" data-id="{{this.id}}">Save</button>
+                                <button type="button" class="btn btn-dark button-edit-brand" data-id="{{this.id}}">Save</button>
                             </div>
                         </div>
                     </div>
@@ -128,7 +128,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-dark" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-dark" data-bs-dismiss="modal" id="btn-save-brand">Save</button>
+                <button type="button" class="btn btn-dark" id="btn-save-brand">Save</button>
             </div>
         </div>
     </div>

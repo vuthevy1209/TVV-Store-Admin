@@ -5,7 +5,6 @@ class BrandController {
     async index(req, res, next) {
         try {
             const brandList = await BrandService.getAll();
-            console.log('Brand list:', brandList);
             res.render('page/brand/BrandList', { brandList });
         } catch (error) {
             console.error('Error searching brands:', error);

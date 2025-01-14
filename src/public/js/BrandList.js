@@ -52,20 +52,63 @@ const uploadFile = async (image) => {
 const saveBtn = document.querySelector('#btn-save-brand');
 
 saveBtn.addEventListener('click', async (e) => {
-    showLoading();
-
     e.preventDefault();
     const brandName = document.querySelector('#brand-name').value;
     const description = document.querySelector('#description').value;
     const logo = document.querySelector('#logo-preview').src;
 
-    if (!brandName || !description || !logo) {
-        alert('Please fill all fields');
-        return;
+    let isValid = true;
+
+    const checkLogo = logo.substring(logo.lastIndexOf('/') + 1);
+
+    if (!brandName) {
+        const brandNameInput = document.querySelector('#brand-name');
+        brandNameInput.classList.add('is-invalid');
+        if (!brandNameInput.nextElementSibling || !brandNameInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const brandNameError = document.createElement('div');
+            brandNameError.className = 'invalid-feedback';
+            brandNameError.textContent = 'Please enter a brand name.';
+            brandNameInput.parentNode.appendChild(brandNameError);
+        }
+        isValid = false;
     }
 
-    const imageUrl = await uploadFile(logo);
+    if (!description) {
+        const descriptionInput = document.querySelector('#description');
+        descriptionInput.classList.add('is-invalid');
+        if (!descriptionInput.nextElementSibling || !descriptionInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const descriptionError = document.createElement('div');
+            descriptionError.className = 'invalid-feedback';
+            descriptionError.textContent = 'Please enter a description.';
+            descriptionInput.parentNode.appendChild(descriptionError);
+        }
+        isValid = false;
+    }
 
+    if (checkLogo === 'image_placeholder.jpg') {
+        const logoInput = document.querySelector('#brand-logo');
+        logoInput.classList.add('is-invalid');
+        if (!logoInput.nextElementSibling || !logoInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const logoError = document.createElement('div');
+            logoError.className = 'invalid-feedback';
+            logoError.textContent = 'Please upload a logo.';
+            logoInput.parentNode.appendChild(logoError);
+        }
+        isValid = false;
+    }
+
+    if (!isValid) {
+        return; 
+    }
+
+    // hide modal
+    const addBrandModal = document.getElementById('add-brand-modal');
+    const bootstrapModal = bootstrap.Modal.getInstance(addBrandModal);
+    bootstrapModal.hide();
+
+    showLoading();
+
+    const imageUrl = await uploadFile(logo);
     const newBrand = {
         name: brandName,
         description: description,
@@ -106,20 +149,70 @@ const updateUIwithEditBrand = (brand) => {
 document.querySelectorAll('.button-edit-brand').forEach(button => {
     button.addEventListener('click', async (e) => {
         e.preventDefault();
+        const brandId = button.getAttribute('data-id');
+        const brandName = document.querySelector(`#brand-name-${brandId}`).value;
+        const description = document.querySelector(`#description-edit-${brandId}`).value;
+        const logo = document.querySelector(`#logo-preview-edit-${brandId}`).src;
+
+        let isValid = true;
+
+        const checkLogo = logo.substring(logo.lastIndexOf('/') + 1);
+
+        if (!brandName) {
+            const brandNameInput = document.querySelector(`#brand-name-${brandId}`);
+            brandNameInput.classList.add('is-invalid');
+            if (!brandNameInput.nextElementSibling || !brandNameInput.nextElementSibling.classList.contains('invalid-feedback')) {
+                const brandNameError = document.createElement('div');
+                brandNameError.className = 'invalid-feedback';
+                brandNameError.textContent = 'Please enter a brand name.';
+                brandNameInput.parentNode.appendChild(brandNameError);
+            }
+            isValid = false;
+        }
+
+        if (!description) {
+            const descriptionInput = document.querySelector(`#description-edit-${brandId}`);
+            descriptionInput.classList.add('is-invalid');
+            if (!descriptionInput.nextElementSibling || !descriptionInput.nextElementSibling.classList.contains('invalid-feedback')) {
+                const descriptionError = document.createElement('div');
+                descriptionError.className = 'invalid-feedback';
+                descriptionError.textContent = 'Please enter a description.';
+                descriptionInput.parentNode.appendChild(descriptionError);
+            }
+            isValid = false;
+        }
+
+        if (checkLogo === 'image_placeholder.jpg') {
+            const logoInput = document.querySelector(`#brand-logo-edit-${brandId}`);
+            logoInput.classList.add('is-invalid');
+            if (!logoInput.nextElementSibling || !logoInput.nextElementSibling.classList.contains('invalid-feedback')) {
+                const logoError = document.createElement('div');
+                logoError.className = 'invalid-feedback';
+                logoError.textContent = 'Please upload a logo.';
+                logoInput.parentNode.appendChild(logoError);
+            }
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        // hide modal
+        const editBrandModal = document.getElementById(`EditModal-${brandId}`);
+        const bootstrapModal = bootstrap.Modal.getInstance(editBrandModal);
+        bootstrapModal.hide();
+
         showLoading();
 
-        const brandId = button.getAttribute('data-id');
-        const image = document.querySelector(`#logo-preview-edit-${brandId}`).src;
-        const imageUrl = await uploadFile(image);
+        const imageUrl = await uploadFile(logo);
 
         const data = {
             id: brandId,
-            name: document.querySelector(`#brand-name-${brandId}`).value,
-            desc: document.querySelector(`#description-edit-${brandId}`).value,
+            name: brandName,
+            desc: description,
             logo: imageUrl
         };
-
-        console.log(data);
 
         try {
             const response = await fetch(`/brands/update`, {
@@ -134,7 +227,6 @@ document.querySelectorAll('.button-edit-brand').forEach(button => {
                 hideLoading();
                 const result = await response.json();
                 updateUIwithEditBrand(result.data);
-
             } else {
                 showAlert('error', 'Error', 'Failed to update brand');
                 hideLoading();
@@ -175,5 +267,60 @@ document.querySelectorAll('.button-delete-modal').forEach(button => {
             hideLoading();
             console.error('Error:', error);
         }
+    });
+});
+
+
+const inputs = document.querySelectorAll('#brand-name, #description, #brand-logo');
+inputs.forEach(input => {
+    input.addEventListener('input', function () {
+        if (this.value.trim() !== '') {
+            this.classList.remove('is-invalid');
+            const error = this.nextElementSibling;
+            if (error && error.classList.contains('invalid-feedback')) {
+                error.remove();
+            }
+        }
+    });
+});
+
+
+// Reset form when add brand modal is hidden
+const addBrandModalElement = document.getElementById('add-brand-modal');
+addBrandModalElement.addEventListener('hidden.bs.modal', () => {
+    const form = addBrandModalElement.querySelector('form');
+    form.reset();
+    document.getElementById('logo-preview').src = '/images/image_placeholder.jpg';
+    form.querySelectorAll('.is-invalid').forEach(element => {
+        element.classList.remove('is-invalid');
+    });
+    form.querySelectorAll('.invalid-feedback').forEach(element => {
+        element.remove();
+    });
+});
+
+// Store the original image URL when the edit modal is shown
+document.querySelectorAll('.modal[id^="EditModal-"]').forEach(modalElement => {
+    modalElement.addEventListener('show.bs.modal', () => {
+        const brandId = modalElement.id.split('-')[1];
+        const originalImage = document.getElementById(`logo-preview-edit-${brandId}`).src;
+        modalElement.setAttribute('data-original-image', originalImage);
+    });
+});
+
+// Reset form when edit brand modal is hidden
+document.querySelectorAll('.modal[id^="EditModal-"]').forEach(modalElement => {
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        const form = modalElement.querySelector('form');
+        form.reset();
+        const brandId = modalElement.id.split('-')[1];
+        const originalImage = modalElement.getAttribute('data-original-image');
+        document.getElementById(`logo-preview-edit-${brandId}`).src = originalImage;
+        form.querySelectorAll('.is-invalid').forEach(element => {
+            element.classList.remove('is-invalid');
+        });
+        form.querySelectorAll('.invalid-feedback').forEach(element => {
+            element.remove();
+        });
     });
 });
