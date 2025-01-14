@@ -70,6 +70,7 @@ th:not(.header-with-sort) {
     border-top: none;
 }
 
-.list-action .button:hover {
+.button:hover {
     transform: scale(1.2);
+
 }

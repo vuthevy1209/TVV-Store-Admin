@@ -117,13 +117,13 @@
                             <td>
                                 <div class="d-flex">
                                     <a href="/users/{{this.id}}" style="color: white; text-decoration: none">
-                                        <button class="btn button-view">
+                                        <button class="button button-view">
                                             <i class="fa-solid fa-eye"></i>
                                         </button>
                                     </a>
 
                                     {{#unless this.isCurrentUser}}
-                                        <button class="btn btn-dark button-unban" data-bs-toggle="modal" data-bs-target="#unblockModal-{{this.id}}">
+                                        <button class="button btn-dark button-unban" data-bs-toggle="modal" data-bs-target="#unblockModal-{{this.id}}">
                                             <i class="fa-solid fa-unlock"></i>
                                         </button>
                                     {{/unless}}
