@@ -6,7 +6,7 @@
 }
 
 .category-list .card-img-top {
-    max-height: 150px;
+    height: 300px;
     object-fit: cover;
     width: 100%;
 }
