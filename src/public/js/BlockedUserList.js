@@ -115,17 +115,19 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>
                         ${user.formatted_created_at}
                     </td>
-                    <td class="d-flex">
-                        <button class="btn btn-success mr-2">
-                            <a href="/users/${user.id}" style="color: white;"> 
-                                <div class="button button-view">
-                                    <i class="fa-solid fa-eye p-2"></i><span>View</span>
-                                </div>
+                    <td>
+                        <div class="d-flex">
+                            <a href="/users/${user.id}" style="color: white; text-decoration: none">
+                                <button class="button button-view">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
                             </a>
-                        </button>
-                        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#unblockModal-${user.id}">
-                            <i class="fa-solid fa-trash"></i> UNBAN
-                        </button>
+                    
+                            <!-- Replace IS_CURRENT_USER with the actual condition -->
+                            <button class="button btn-dark button-unban" data-bs-toggle="modal" data-bs-target="#unblockModal-${user.id}">
+                                <i class="fa-solid fa-unlock"></i>
+                            </button>
+                        </div>
                     </td>
                 </tr>
 

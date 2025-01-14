@@ -115,18 +115,20 @@ document.addEventListener('DOMContentLoaded', function () {
                     <td>
                         ${user.formatted_created_at}
                     </td>
-                    <td class="d-flex">
-                        <button class="btn btn-success mr-2">
-                            <a href="/users/${user.id}" style="color: white;"> 
-                                <div class="button button-view">
-                                    <i class="fa-solid fa-eye p-2"></i><span>View</span>
-                                </div>
+                    <td>
+                        <div class="d-flex">
+                            <a href="/users/${user.id}" style="color: white; text-decoration: none">
+                                <button class="button button-view">
+                                    <i class="fa-solid fa-eye"></i>
+                                </button>
                             </a>
-                        </button>
-                        ${user.isCurrentUser ? '' : `
-                        <button class="btn btn-dark" data-bs-toggle="modal" data-bs-target="#deleteModal-${user.id}">
-                            <i class="fa-solid fa-trash"></i> BAN
-                        </button>`}
+                    
+                            ${!user.isCurrentUser ? `
+                            <button class="button btn-dark button-ban" data-bs-toggle="modal" data-bs-target="#deleteModal-${user.id}">
+                                <i class="fa-solid fa-lock"></i>
+                            </button>
+                            ` : ''}
+                        </div>
                     </td>
                 </tr>
 
