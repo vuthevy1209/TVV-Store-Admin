@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
             isValid = false;
         } else {
             if (imageErrorMessage) {
-                imageErrorMessage.remove(); // Xóa thông báo lỗi nếu có ảnh
+                imageErrorMessage.remove();
             }
         }
 

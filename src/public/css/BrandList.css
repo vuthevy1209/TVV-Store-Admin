@@ -71,3 +71,13 @@ textarea {
     border: 1px solid #ddd;
     resize: none;
 }
+
+.is-invalid {
+    border-color: red;
+}
+
+.invalid-feedback {
+    color: red;
+    display: block;
+    margin-top: 0.25rem;
+}

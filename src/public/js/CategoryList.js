@@ -51,20 +51,63 @@ const uploadFile = async (image) => {
 const saveBtn = document.querySelector('#btn-save-category');
 
 saveBtn.addEventListener('click', async (e) => {
-    showLoading();
-
     e.preventDefault();
     const categoryName = document.querySelector('#category-name').value;
     const description = document.querySelector('#description').value;
     const logo = document.querySelector('#logo-preview').src;
 
-    if (!categoryName || !description || !logo) {
-        alert('Please fill all fields');
+    let isValid = true;
+
+    const checkLogo = logo.substring(logo.lastIndexOf('/') + 1);
+
+    if (!categoryName) {
+        const categoryNameInput = document.querySelector('#category-name');
+        categoryNameInput.classList.add('is-invalid');
+        if (!categoryNameInput.nextElementSibling || !categoryNameInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const categoryNameError = document.createElement('div');
+            categoryNameError.className = 'invalid-feedback';
+            categoryNameError.textContent = 'Please enter a category name.';
+            categoryNameInput.parentNode.appendChild(categoryNameError);
+        }
+        isValid = false;
+    }
+
+    if (!description) {
+        const descriptionInput = document.querySelector('#description');
+        descriptionInput.classList.add('is-invalid');
+        if (!descriptionInput.nextElementSibling || !descriptionInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const descriptionError = document.createElement('div');
+            descriptionError.className = 'invalid-feedback';
+            descriptionError.textContent = 'Please enter a description.';
+            descriptionInput.parentNode.appendChild(descriptionError);
+        }
+        isValid = false;
+    }
+
+    if (checkLogo === 'image_placeholder.jpg') {
+        const logoInput = document.querySelector('#category-logo');
+        logoInput.classList.add('is-invalid');
+        if (!logoInput.nextElementSibling || !logoInput.nextElementSibling.classList.contains('invalid-feedback')) {
+            const logoError = document.createElement('div');
+            logoError.className = 'invalid-feedback';
+            logoError.textContent = 'Please upload a logo.';
+            logoInput.parentNode.appendChild(logoError);
+        }
+        isValid = false;
+    }
+
+    if (!isValid) {
         return;
     }
 
-    const imageUrl = await uploadFile(logo);
+    // hide modal
+    const addCategoryModal = document.getElementById('add-category-modal');
+    const bootstrapModal = bootstrap.Modal.getInstance(addCategoryModal);
+    bootstrapModal.hide();
 
+    showLoading();
+
+    const imageUrl = await uploadFile(logo);
     const newCategory = {
         name: categoryName,
         description: description,
@@ -99,26 +142,85 @@ const updateUIwithEditCategory = (category) => {
 
     categoryCard.querySelector('.card-img-top').src = category.logo;
     categoryCard.querySelector('.card-text').textContent = category.name;
+
+    // Update the edit modal fields
+    const categoryNameInput = document.querySelector(`#category-name-${category.id}`);
+    const descriptionInput = document.querySelector(`#description-edit-${category.id}`);
+    const logoPreview = document.querySelector(`#logo-preview-edit-${category.id}`);
+
+    categoryNameInput.value = category.name;
+    descriptionInput.value = category.desc;
+    logoPreview.src = category.logo;
 };
 
 // edit category
 document.querySelectorAll('.button-edit-category').forEach(button => {
     button.addEventListener('click', async (e) => {
         e.preventDefault();
+        const categoryId = button.getAttribute('data-id');
+        const categoryName = document.querySelector(`#category-name-${categoryId}`).value;
+        const description = document.querySelector(`#description-edit-${categoryId}`).value;
+        const logo = document.querySelector(`#logo-preview-edit-${categoryId}`).src;
+
+        let isValid = true;
+
+        const checkLogo = logo.substring(logo.lastIndexOf('/') + 1);
+
+        if (!categoryName) {
+            const categoryNameInput = document.querySelector(`#category-name-${categoryId}`);
+            categoryNameInput.classList.add('is-invalid');
+            if (!categoryNameInput.nextElementSibling || !categoryNameInput.nextElementSibling.classList.contains('invalid-feedback')) {
+                const categoryNameError = document.createElement('div');
+                categoryNameError.className = 'invalid-feedback';
+                categoryNameError.textContent = 'Please enter a category name.';
+                categoryNameInput.parentNode.appendChild(categoryNameError);
+            }
+            isValid = false;
+        }
+
+        if (!description) {
+            const descriptionInput = document.querySelector(`#description-edit-${categoryId}`);
+            descriptionInput.classList.add('is-invalid');
+            if (!descriptionInput.nextElementSibling || !descriptionInput.nextElementSibling.classList.contains('invalid-feedback')) {
+                const descriptionError = document.createElement('div');
+                descriptionError.className = 'invalid-feedback';
+                descriptionError.textContent = 'Please enter a description.';
+                descriptionInput.parentNode.appendChild(descriptionError);
+            }
+            isValid = false;
+        }
+
+        if (checkLogo === 'image_placeholder.jpg') {
+            const logoInput = document.querySelector(`#category-logo-edit-${categoryId}`);
+            logoInput.classList.add('is-invalid');
+            if (!logoInput.nextElementSibling || !logoInput.nextElementSibling.classList.contains('invalid-feedback')) {
+                const logoError = document.createElement('div');
+                logoError.className = 'invalid-feedback';
+                logoError.textContent = 'Please upload a logo.';
+                logoInput.parentNode.appendChild(logoError);
+            }
+            isValid = false;
+        }
+
+        if (!isValid) {
+            return;
+        }
+
+        // hide modal
+        const editCategoryModal = document.getElementById(`EditModal-${categoryId}`);
+        const bootstrapModal = bootstrap.Modal.getInstance(editCategoryModal);
+        bootstrapModal.hide();
+
         showLoading();
 
-        const categoryId = button.getAttribute('data-id');
-        const image = document.querySelector(`#logo-preview-edit-${categoryId}`).src;
-        const imageUrl = await uploadFile(image);
+        const imageUrl = await uploadFile(logo);
 
         const data = {
             id: categoryId,
-            name: document.querySelector(`#category-name-${categoryId}`).value,
-            desc: document.querySelector(`#description-edit-${categoryId}`).value,
+            name: categoryName,
+            desc: description,
             logo: imageUrl
         };
-
-        console.log(data);
 
         try {
             const response = await fetch(`/categories/update`, {
@@ -132,9 +234,8 @@ document.querySelectorAll('.button-edit-category').forEach(button => {
                 showAlert('success', 'Success', 'Category updated successfully');
                 hideLoading();
                 const result = await response.json();
-                console.log(result);
+                console.log('Result:', result.data);
                 updateUIwithEditCategory(result.data);
-
             } else {
                 showAlert('error', 'Error', 'Failed to update category');
                 hideLoading();
@@ -175,5 +276,58 @@ document.querySelectorAll('.button-delete-modal').forEach(button => {
             hideLoading();
             console.error('Error:', error);
         }
+    });
+});
+
+const inputs = document.querySelectorAll('#category-name, #description, #category-logo');
+inputs.forEach(input => {
+    input.addEventListener('input', function () {
+        if (this.value.trim() !== '') {
+            this.classList.remove('is-invalid');
+            const error = this.nextElementSibling;
+            if (error && error.classList.contains('invalid-feedback')) {
+                error.remove();
+            }
+        }
+    });
+});
+
+// Reset form when add category modal is hidden
+const addCategoryModalElement = document.getElementById('add-category-modal');
+addCategoryModalElement.addEventListener('hidden.bs.modal', () => {
+    const form = addCategoryModalElement.querySelector('form');
+    form.reset();
+    document.getElementById('logo-preview').src = '/images/image_placeholder.jpg';
+    form.querySelectorAll('.is-invalid').forEach(element => {
+        element.classList.remove('is-invalid');
+    });
+    form.querySelectorAll('.invalid-feedback').forEach(element => {
+        element.remove();
+    });
+});
+
+// Store the original image URL when the edit modal is shown
+document.querySelectorAll('.modal[id^="EditModal-"]').forEach(modalElement => {
+    modalElement.addEventListener('show.bs.modal', () => {
+        const categoryId = modalElement.id.split('-')[1];
+        const originalImage = document.getElementById(`logo-preview-edit-${categoryId}`).src;
+        modalElement.setAttribute('data-original-image', originalImage);
+    });
+});
+
+// Reset form when edit category modal is hidden
+document.querySelectorAll('.modal[id^="EditModal-"]').forEach(modalElement => {
+    modalElement.addEventListener('hidden.bs.modal', () => {
+        const form = modalElement.querySelector('form');
+        form.reset();
+        const categoryId = modalElement.id.split('-')[1];
+        const originalImage = modalElement.getAttribute('data-original-image');
+        document.getElementById(`logo-preview-edit-${categoryId}`).src = originalImage;
+        form.querySelectorAll('.is-invalid').forEach(element => {
+            element.classList.remove('is-invalid');
+        });
+        form.querySelectorAll('.invalid-feedback').forEach(element => {
+            element.remove();
+        });
     });
 });
