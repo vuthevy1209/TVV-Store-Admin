@@ -144,7 +144,7 @@ class ProductService {
 
     // Create a new product
     async create(product) {
-        indexProducts().then(() => {
+        this.indexProducts().then(() => {
         }).catch(err => {
             console.error('Error indexing products:', err);
         });
