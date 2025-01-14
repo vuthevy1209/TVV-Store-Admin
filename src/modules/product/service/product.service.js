@@ -9,6 +9,7 @@ const index = require('../../../config/flexSearch');
 
 const {sequelize} = require('../../../config/database');
 const {Op} = require('sequelize');
+const constants = require("node:constants");
 
 class ProductService {
     // Get all products
@@ -115,7 +116,7 @@ class ProductService {
             order.push(['price', searchParams.sort_by_price]);
         }
 
-        const {rows: productList, count: totalProducts} = await Product.findAndCountAll({
+        let {rows: productList, count: totalProducts} = await Product.findAndCountAll({
             where,
             include: [
                 {model: Category, attributes: ['name']},
@@ -127,6 +128,13 @@ class ProductService {
         });
 
         const totalPages = Math.ceil(totalProducts / limit);
+
+        // parse price to integer
+        productList = productList.map(product => {
+            product = product.get({plain: true});
+            product.price = parseInt(product.price);
+            return product;
+        });
 
         return {
             productList,

@@ -107,11 +107,11 @@
                             <td>
                                 <span class="product-category">{{this.category.name}}</span>
                             </td>
-                            <td>${{this.price}}</td>
+                            <td>{{formatCurrency this.price}}</td>
                             <td class="text-uppercase">
                                 <span class="product-brand">{{this.brand.name}}</span>
                             </td>
-                            <td>{{this.inventory_quantity}}</td>
+                            <td>{{formatNumber this.inventory_quantity}}</td>
                             <td>
                                 <div class="d-flex align-items-center justify-content-center list-action">
                                     <!--                                        <div class="button button-view mr-2">-->

@@ -77,6 +77,12 @@ const hbs = engine({
 
             return formattedCurrency;
         },
+        formatNumber: function (value) {
+            if (typeof value !== 'number') {
+                return value;
+            }
+            return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        },
         defaultVal: function (value, defaultValue) {
             if (!value) {
                 return defaultValue;
