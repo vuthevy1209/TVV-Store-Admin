@@ -30,8 +30,10 @@ class OrderController {
         const { id } = req.params;
         try {
             const order = await orderService.fetchOrderById(id);
-            console.log('Order fetched successfully');
             const orderStatusList = await orderService.getSupportedUpdateStatus(order.status);
+            console.log("Order", order);
+
+
             return res.render('page/order/OrderDetail', { order, orderStatusList });
         } catch (err) {
             console.log(err);
